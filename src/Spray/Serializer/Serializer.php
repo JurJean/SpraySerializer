@@ -36,19 +36,19 @@ class Serializer implements SerializerInterface
         return true;
     }
     
-    public function deserialize($subject, array &$data = array())
+    public function deserialize($subject, array &$data = array(), SerializerInterface $parent = null)
     {
         $subject = $this->construct($subject);
         foreach ($this->ancestry($subject) as $class) {
-            $this->serializers->locate($class)->deserialize($subject, $data);
+            $this->serializers->locate($class)->deserialize($subject, $data, $this);
         }
         return $subject;
     }
 
-    public function serialize($subject, array &$data = array())
+    public function serialize($subject, array &$data = array(), SerializerInterface $parent = null)
     {
         foreach ($this->ancestry($subject) as $class) {
-            $this->serializers->locate($class)->serialize($subject, $data);
+            $this->serializers->locate($class)->serialize($subject, $data, $this);
         }
         return $data;
     }

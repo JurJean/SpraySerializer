@@ -1,5 +1,8 @@
 {
     "name": "spray/serializer",
+    "require": {
+        "doctrine/annotations": ">=1.2.0"
+    },
     "require-dev": {
         "phpunit/phpunit": "4.4.*"
     },

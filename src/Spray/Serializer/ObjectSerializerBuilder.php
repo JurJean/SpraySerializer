@@ -2,6 +2,8 @@
 
 namespace Spray\Serializer;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+
 class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
 {
     /**
@@ -9,9 +11,17 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
      */
     private $reflections;
     
-    public function __construct(ReflectionRegistryInterface $reflections)
+    /**
+     * @var AnnotationReader
+     */
+    private $annotations;
+    
+    public function __construct(
+        ReflectionRegistryInterface $reflections,
+        AnnotationReader $annotations)
     {
         $this->reflections = $reflections;
+        $this->annotations = $annotations;
     }
     
     public function build($subject)
@@ -52,7 +62,11 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
     {
         $result = array();
         foreach ($this->reflections->getReflection($subject)->getProperties() as $property) {
-            $result[] = $property->getName();
+            $type = $this->annotations->getPropertyAnnotation($property, 'var');
+            $result[] = array(
+                'name' => $property->getName(),
+                'object' => class_exists($type),
+            );
         }
         return $result;
     }

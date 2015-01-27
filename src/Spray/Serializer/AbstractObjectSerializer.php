@@ -7,16 +7,14 @@ use Closure;
 abstract class AbstractObjectSerializer implements SerializerInterface
 {
     private $class;
-    private $parents;
     private $serializer;
     private $deserializer;
     private $serializationCallback;
     private $deserializationCallback;
     
-    public function __construct($serializationCallback, $deserializationCallback, $class, $parents = null)
+    public function __construct($serializationCallback, $deserializationCallback, $class)
     {
         $this->class = $class;
-        $this->parents = $parents;
         $this->serializationCallback = $serializationCallback;
         $this->deserializationCallback = $deserializationCallback;
     }
@@ -37,7 +35,7 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return $this->serializer;
     }
     
-    public function serialize($subject, array &$data = array())
+    public function serialize($subject, array &$data = array(), SerializerInterface $parent = null)
     { 
         $serializer = $this->getSerializer();
         $serializer($subject, $data);
@@ -52,7 +50,7 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return $this->deserializer;
     }
     
-    public function deserialize($subject, array &$data = array())
+    public function deserialize($subject, array &$data = array(), SerializerInterface $parent = null)
     {
         $deserializer = $this->getDeserializer();
         $deserializer($subject, $data);

@@ -2,16 +2,18 @@
 
 namespace Spray\Serializer;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit_Framework_TestCase;
 use Spray\Serializer\Cache\ArrayCache;
 use Spray\Serializer\TestAssets\InheritedSubject;
+use Spray\Serializer\TestAssets\Subject;
 
 class SerializerTest extends PHPUnit_Framework_TestCase
 {
     protected function buildSerializer()
     {
         $registry = new SerializerRegistry();
-        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
+        $builder = new ObjectSerializerBuilder(new ReflectionRegistry(), new AnnotationReader());
         $cache = new ArrayCache();
         $locator = new SerializerLocator($registry, $builder, $cache);
         return new Serializer($locator);
@@ -19,13 +21,17 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     
     public function testSerializeInheritedSubject()
     {
-        $subject = new InheritedSubject('foo', 'bar', 'baz', 'foobar');
+        $subject = new InheritedSubject('foo', 'bar', 'baz', new Subject('foo', 'bar', 'baz'));
         $this->assertEquals(
             array(
                 'foo' => 'foo',
                 'bar' => 'bar',
                 'baz' => 'baz',
-                'foobar' => 'foobar',
+                'foobar' => array(
+                    'foo' => 'foo',
+                    'bar' => 'bar',
+                    'baz' => 'baz',
+                ),
             ),
             $this->buildSerializer()->serialize($subject)
         );
@@ -37,10 +43,14 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             'foo' => 'foo',
             'bar' => 'bar',
             'baz' => 'baz',
-            'foobar' => 'foobar',
+            'foobar' => array(
+                'foo' => 'foo',
+                'bar' => 'bar',
+                'baz' => 'baz',
+            ),
         );
         $this->assertEquals(
-            new InheritedSubject('foo', 'bar', 'baz', 'foobar'),
+            new InheritedSubject('foo', 'bar', 'baz', new Subject('foo', 'bar', 'baz')),
             $this->buildSerializer()->deserialize('Spray\Serializer\TestAssets\InheritedSubject', $data)
         );
     }
