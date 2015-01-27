@@ -1,0 +1,27 @@
+<?php echo '<?php'; ?>
+
+namespace <?php echo $namespace; ?>;
+
+use Spray\Serializer\AbstractObjectSerializer;
+
+class <?php echo $class ?>Serializer extends AbstractObjectSerializer
+{
+    public function __construct($parents = null)
+    {
+        $self = $this;
+        parent::__construct(
+            function($subject, array &$data) use ($self) {
+<?php foreach ($properties as $property): ?>
+                $data['<?php echo $property ?>'] = $subject-><?php echo $property ?>;
+<?php endforeach ?>
+            },
+            function($subject, array &$data) use ($self) {
+<?php foreach ($properties as $property): ?>
+                $subject-><?php echo $property ?> = $data['<?php echo $property ?>'];
+<?php endforeach ?>
+            },
+            '<?php echo $namespace; ?>\<?php echo $class ?>',
+            $parents
+        );
+    }
+}
