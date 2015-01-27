@@ -2,7 +2,7 @@
 
 namespace Spray\Serializer;
 
-use ReflectionClass;
+use Zend\Code\Reflection\ClassReflection;
 
 class ReflectionRegistry implements ReflectionRegistryInterface
 {
@@ -11,7 +11,7 @@ class ReflectionRegistry implements ReflectionRegistryInterface
     public function getReflection($class)
     {
         if ( ! isset($this->reflections[$class])) {
-            $this->reflections[$class] = new ReflectionClass($class);
+            $this->reflections[$class] = new ClassReflection($class);
         }
         return $this->reflections[$class];
     }

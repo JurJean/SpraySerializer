@@ -2,13 +2,13 @@
 
 namespace Spray\Serializer;
 
-use ReflectionClass;
+use Zend\Code\Reflection\ReflectionInterface;
 
 interface ReflectionRegistryInterface
 {
     /**
      * @param string|object $class
-     * @return ReflectionClass
+     * @return ReflectionInterface
      */
     public function getReflection($class);
 }

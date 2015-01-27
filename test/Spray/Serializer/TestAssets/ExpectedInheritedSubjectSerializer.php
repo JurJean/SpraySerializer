@@ -2,21 +2,22 @@
 namespace Spray\Serializer\TestAssets;
 
 use Spray\Serializer\AbstractObjectSerializer;
+use Spray\Serializer\SerializerInterface;
 
 class InheritedSubjectSerializer extends AbstractObjectSerializer
 {
-    public function __construct($parents = null)
+    public function __construct()
     {
-        $self = $this;
         parent::__construct(
-            function($subject, array &$data, SerializerInterface $parent = null) use ($self) {
-                $data['foobar'] = $parent->serialize($subject->foobar);
+            function($subject, array &$data, SerializerInterface $serializer) {
+                $data['foobar'] = $serializer->serialize($subject->foobar);
+                $data['barbaz'] = $subject->barbaz;
             },
-            function($subject, array &$data, SerializerInterface $parent = null) use ($self) {
-                $subject->foobar = $parent->deserialize('Spray\Serializer\TestAssets\Subject', $data['foobar']);
+            function($subject, array &$data, SerializerInterface $serializer) {
+                $subject->foobar = $serializer->deserialize('Spray\Serializer\TestAssets\Subject', $data['foobar']);
+                $subject->barbaz = $data['barbaz'];
             },
-            'Spray\Serializer\TestAssets\InheritedSubject',
-            $parents
+            'Spray\Serializer\TestAssets\InheritedSubject'
         );
     }
 }

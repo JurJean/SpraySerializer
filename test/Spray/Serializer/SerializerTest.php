@@ -2,7 +2,6 @@
 
 namespace Spray\Serializer;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit_Framework_TestCase;
 use Spray\Serializer\Cache\ArrayCache;
 use Spray\Serializer\TestAssets\InheritedSubject;
@@ -13,7 +12,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     protected function buildSerializer()
     {
         $registry = new SerializerRegistry();
-        $builder = new ObjectSerializerBuilder(new ReflectionRegistry(), new AnnotationReader());
+        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
         $cache = new ArrayCache();
         $locator = new SerializerLocator($registry, $builder, $cache);
         return new Serializer($locator);
@@ -32,6 +31,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     'bar' => 'bar',
                     'baz' => 'baz',
                 ),
+                'barbaz' => 'barbaz'
             ),
             $this->buildSerializer()->serialize($subject)
         );
@@ -48,6 +48,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 'bar' => 'bar',
                 'baz' => 'baz',
             ),
+            'barbaz' => 'barbaz'
         );
         $this->assertEquals(
             new InheritedSubject('foo', 'bar', 'baz', new Subject('foo', 'bar', 'baz')),

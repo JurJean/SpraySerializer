@@ -1,27 +1,34 @@
 <?php echo '<?php'; ?>
 
-namespace <?php echo $namespace; ?>;
+namespace <?php echo $reflection->getNamespaceName(); ?>;
 
 use Spray\Serializer\AbstractObjectSerializer;
+use Spray\Serializer\SerializerInterface;
 
-class <?php echo $class ?>Serializer extends AbstractObjectSerializer
+class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObjectSerializer
 {
-    public function __construct($parents = null)
+    public function __construct()
     {
-        $self = $this;
         parent::__construct(
-            function($subject, array &$data) use ($self) {
+            function($subject, array &$data, SerializerInterface $serializer) {
 <?php foreach ($properties as $property): ?>
-                $data['<?php echo $property ?>'] = $subject-><?php echo $property ?>;
+<?php if ($this->isTargetObject($property)): ?>
+                $data['<?php echo $property->getName() ?>'] = $serializer->serialize($subject-><?php echo $property->getName() ?>);
+<?php else: ?>
+                $data['<?php echo $property->getName() ?>'] = $subject-><?php echo $property->getName() ?>;
+<?php endif; ?>
 <?php endforeach ?>
             },
-            function($subject, array &$data) use ($self) {
+            function($subject, array &$data, SerializerInterface $serializer) {
 <?php foreach ($properties as $property): ?>
-                $subject-><?php echo $property ?> = $data['<?php echo $property ?>'];
+<?php if ($this->isTargetObject($property)): ?>
+                $subject-><?php echo $property->getName() ?> = $serializer->deserialize('<?php echo $this->getTargetClass($property) ?>', $data['<?php echo $property->getName() ?>']);
+<?php else: ?>
+                $subject-><?php echo $property->getName() ?> = $data['<?php echo $property->getName() ?>'];
+<?php endif; ?>
 <?php endforeach ?>
             },
-            '<?php echo $namespace; ?>\<?php echo $class ?>',
-            $parents
+            '<?php echo $reflection->getName(); ?>'
         );
     }
 }

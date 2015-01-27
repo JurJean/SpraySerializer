@@ -35,10 +35,10 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return $this->serializer;
     }
     
-    public function serialize($subject, array &$data = array(), SerializerInterface $parent = null)
+    public function serialize($subject, array &$data = array(), SerializerInterface $serializer = null)
     { 
-        $serializer = $this->getSerializer();
-        $serializer($subject, $data);
+        $serialize = $this->getSerializer();
+        $serialize($subject, $data, $serializer);
         return $data;
     }
     
@@ -50,10 +50,10 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return $this->deserializer;
     }
     
-    public function deserialize($subject, array &$data = array(), SerializerInterface $parent = null)
+    public function deserialize($subject, array &$data = array(), SerializerInterface $serializer = null)
     {
-        $deserializer = $this->getDeserializer();
-        $deserializer($subject, $data);
+        $deserialize = $this->getDeserializer();
+        $deserialize($subject, $data, $serializer);
         return $subject;
     }
 }

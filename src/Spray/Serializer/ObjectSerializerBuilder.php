@@ -2,7 +2,8 @@
 
 namespace Spray\Serializer;
 
-use Doctrine\Common\Annotations\AnnotationReader;
+use RuntimeException;
+use Zend\Code\Reflection\PropertyReflection;
 
 class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
 {
@@ -11,32 +12,15 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
      */
     private $reflections;
     
-    /**
-     * @var AnnotationReader
-     */
-    private $annotations;
-    
-    public function __construct(
-        ReflectionRegistryInterface $reflections,
-        AnnotationReader $annotations)
+    public function __construct(ReflectionRegistryInterface $reflections)
     {
         $this->reflections = $reflections;
-        $this->annotations = $annotations;
     }
     
     public function build($subject)
     {
-        if (is_object($subject)) {
-            $subject = get_class($subject);
-        }
-        
-        $path = pathinfo(__FILE__);
-        
-        $parts = explode('\\', $subject);
-        $class = array_pop($parts);
-        $namespace = implode('\\', $parts);
-        
-        $properties = $this->findPropertiesDefinedInClass($subject);
+        $reflection = $this->reflections->getReflection($subject);
+        $properties = $this->properties($subject);
         
         ob_start();
         include sprintf(
@@ -44,6 +28,15 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             __DIR__
         );
         return ob_get_clean();
+    }
+    
+    protected function properties($subject)
+    {
+        $result = array();
+        foreach ($this->findPropertiesDefinedInClass($subject) as $property) {
+            $result[] = $this->reflections->getReflection($subject)->getProperty($property);
+        }
+        return $result;
     }
     
     protected function findPropertiesDefinedInClass($subject)
@@ -62,12 +55,61 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
     {
         $result = array();
         foreach ($this->reflections->getReflection($subject)->getProperties() as $property) {
-            $type = $this->annotations->getPropertyAnnotation($property, 'var');
-            $result[] = array(
-                'name' => $property->getName(),
-                'object' => class_exists($type),
-            );
+            $result[] = $property->getName();
         }
         return $result;
+    }
+    
+    protected function isTargetObject(PropertyReflection $property)
+    {
+        if ( ! $property->getDocBlock()) {
+            return false;
+        }
+        if ( ! $property->getDocBlock()->hasTag('var')) {
+            return false;
+        }
+        
+        $scalar = array(
+            'int',
+            'float',
+            'double',
+            'string',
+            'array'
+        );
+        
+        if (in_array($property->getDocBlock()->getTag('var')->getContent(), $scalar)) {
+            return false;
+        }
+        if (class_exists($property->getDocBlock()->getTag('var')->getContent())) {
+            return true;
+        }
+        if (class_exists(sprintf(
+            '%s\\%s',
+            $property->getDeclaringClass()->getNamespaceName(),
+            $property->getDocBlock()->getTag('var')->getContent()))) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public function getTargetClass($property)
+    {
+        if ( ! $this->isTargetObject($property)) {
+            throw new RuntimeException(sprintf(
+                'Target value of property %s is not an object',
+                $property
+            ));
+        }
+        
+        if (class_exists($property->getDocBlock()->getTag('var')->getContent())) {
+            return $property->getDocBlock()->getTag('var')->getContent();
+        }
+        
+        return sprintf(
+            '%s\\%s',
+            $property->getDeclaringClass()->getNamespaceName(),
+            $property->getDocBlock()->getTag('var')->getContent()
+        );
     }
 }
