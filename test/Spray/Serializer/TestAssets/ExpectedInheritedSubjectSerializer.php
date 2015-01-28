@@ -11,11 +11,11 @@ class InheritedSubjectSerializer extends AbstractObjectSerializer
         parent::__construct(
             function($subject, array &$data, SerializerInterface $serializer) {
                 $data['foobar'] = $serializer->serialize($subject->foobar);
-                $data['barbaz'] = $subject->barbaz;
+                $data['barbaz'] = $serializer->serialize($subject->barbaz);
             },
             function($subject, array &$data, SerializerInterface $serializer) {
                 $subject->foobar = $serializer->deserialize('Spray\Serializer\TestAssets\Subject', $data['foobar']);
-                $subject->barbaz = $data['barbaz'];
+                $subject->barbaz = $serializer->deserialize('DateTime', $data['barbaz']);
             },
             'Spray\Serializer\TestAssets\InheritedSubject'
         );

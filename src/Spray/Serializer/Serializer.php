@@ -2,6 +2,8 @@
 
 namespace Spray\Serializer;
 
+use ReflectionClass;
+
 class Serializer implements SerializerInterface
 {
     /**
@@ -36,7 +38,7 @@ class Serializer implements SerializerInterface
         return true;
     }
     
-    public function deserialize($subject, array &$data = array(), SerializerInterface $serializer = null)
+    public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
         $subject = $this->construct($subject);
         foreach ($this->ancestry($subject) as $class) {
@@ -45,7 +47,7 @@ class Serializer implements SerializerInterface
         return $subject;
     }
 
-    public function serialize($subject, array &$data = array(), SerializerInterface $serializer = null)
+    public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
         foreach ($this->ancestry($subject) as $class) {
             $this->serializers->locate($class)->serialize($subject, $data, $this);

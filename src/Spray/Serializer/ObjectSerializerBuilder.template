@@ -1,6 +1,8 @@
 <?php echo '<?php'; ?>
 
+<?php if ($reflection->inNamespace()): ?>
 namespace <?php echo $reflection->getNamespaceName(); ?>;
+<?php endif; ?>
 
 use Spray\Serializer\AbstractObjectSerializer;
 use Spray\Serializer\SerializerInterface;

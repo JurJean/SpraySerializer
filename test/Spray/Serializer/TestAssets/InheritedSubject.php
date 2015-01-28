@@ -2,6 +2,8 @@
 
 namespace Spray\Serializer\TestAssets;
 
+use DateTime;
+
 class InheritedSubject extends Subject
 {
     /**
@@ -10,13 +12,14 @@ class InheritedSubject extends Subject
     private $foobar;
     
     /**
-     * @var string
+     * @var DateTime
      */
-    private $barbaz = 'barbaz';
+    private $barbaz;
     
-    public function __construct($foo, $bar, $baz, Subject $foobar)
+    public function __construct($foo, $bar, $baz, Subject $foobar, DateTime $barbaz)
     {
         parent::__construct($foo, $bar, $baz);
         $this->foobar = $foobar;
+        $this->barbaz = $barbaz;
     }
 }

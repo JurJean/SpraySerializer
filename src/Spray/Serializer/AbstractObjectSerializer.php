@@ -24,6 +24,8 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         if (is_object($subject)) {
             $subject = get_class($subject);
         }
+        var_dump($subject);
+        var_dump($this->class);
         return $subject === $this->class;
     }
     
@@ -35,7 +37,7 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return $this->serializer;
     }
     
-    public function serialize($subject, array &$data = array(), SerializerInterface $serializer = null)
+    public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)
     { 
         $serialize = $this->getSerializer();
         $serialize($subject, $data, $serializer);
@@ -50,7 +52,7 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return $this->deserializer;
     }
     
-    public function deserialize($subject, array &$data = array(), SerializerInterface $serializer = null)
+    public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
         $deserialize = $this->getDeserializer();
         $deserialize($subject, $data, $serializer);
