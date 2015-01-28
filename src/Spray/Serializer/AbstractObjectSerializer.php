@@ -24,11 +24,20 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         if (is_object($subject)) {
             $subject = get_class($subject);
         }
-        var_dump($subject);
-        var_dump($this->class);
         return $subject === $this->class;
     }
     
+    public function construct($subject, &$data = array())
+    {
+        return unserialize(
+            sprintf(
+                'O:%d:"%s":0:{}',
+                strlen($subject),
+                $subject
+            )
+        );
+    }
+
     protected function getSerializer()
     {
         if (null === $this->serializer) {

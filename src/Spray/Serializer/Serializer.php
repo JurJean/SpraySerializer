@@ -3,34 +3,23 @@
 namespace Spray\Serializer;
 
 use ReflectionClass;
+use Zend\EventManager\EventManagerInterface;
 
 class Serializer implements SerializerInterface
 {
     /**
      * @var SerializerLocatorInterface
      */
-    public $serializers;
+    private $serializers;
+    
+    /**
+     * @var EventManagerInterface
+     */
+    private $events;
     
     public function __construct(SerializerLocatorInterface $serializers)
     {
         $this->serializers = $serializers;
-    }
-    
-    /**
-     * Construct $subject without calling the constructor
-     * 
-     * @param string $subject
-     * @return object
-     */
-    public function construct($subject)
-    {
-        return unserialize(
-            sprintf(
-                'O:%d:"%s":0:{}',
-                strlen($subject),
-                $subject
-            )
-        );
     }
     
     public function accepts($subject)
@@ -38,9 +27,14 @@ class Serializer implements SerializerInterface
         return true;
     }
     
+    public function construct($subject, &$data = array())
+    {
+        return $this->serializers->locate($subject)->construct($subject, $data);
+    }
+    
     public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
-        $subject = $this->construct($subject);
+        $subject = $this->construct($subject, $data);
         foreach ($this->ancestry($subject) as $class) {
             $this->serializers->locate($class)->deserialize($subject, $data, $this);
         }

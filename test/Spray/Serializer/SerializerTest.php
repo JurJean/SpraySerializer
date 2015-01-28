@@ -13,6 +13,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     protected function buildSerializer()
     {
         $registry = new SerializerRegistry();
+        $registry->add(new DateTimeSerializer());
         $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
         $cache = new ArrayCache();
         $locator = new SerializerLocator($registry, $builder, $cache);

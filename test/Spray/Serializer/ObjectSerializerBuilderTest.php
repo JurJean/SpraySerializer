@@ -2,7 +2,6 @@
 
 namespace Spray\Serializer;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit_Framework_TestCase;
 
 class ObjectSerializerBuilderTest extends PHPUnit_Framework_TestCase
