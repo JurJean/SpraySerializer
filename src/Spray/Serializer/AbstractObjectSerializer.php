@@ -11,6 +11,7 @@ abstract class AbstractObjectSerializer implements SerializerInterface
     private $deserializer;
     private $serializationCallback;
     private $deserializationCallback;
+    private $constructed;
     
     public function __construct($serializationCallback, $deserializationCallback, $class)
     {
@@ -29,13 +30,16 @@ abstract class AbstractObjectSerializer implements SerializerInterface
     
     public function construct($subject, &$data = array())
     {
-        return unserialize(
-            sprintf(
-                'O:%d:"%s":0:{}',
-                strlen($subject),
-                $subject
-            )
-        );
+        if (null === $this->constructed) {
+            $this->constructed = unserialize(
+                sprintf(
+                    'O:%d:"%s":0:{}',
+                    strlen($subject),
+                    $subject
+                )
+            );
+        }
+        return clone $this->constructed;
     }
 
     protected function getSerializer()
