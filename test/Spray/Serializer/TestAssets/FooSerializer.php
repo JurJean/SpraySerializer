@@ -15,16 +15,16 @@ class FooSerializer extends AbstractObjectSerializer
                 foreach ($subject->bars as $key => $value) {
                     $data['bars'][$key] = $serializer->serialize($value);
                 }
-                $data['baz'] = $serializer->serialize($subject->baz);
-                $data['date'] = $serializer->serialize($subject->date);
+                $data['baz'] = isset($subject->baz) ? $serializer->serialize($subject->baz) : null;
+                $data['date'] = isset($subject->date) ? $serializer->serialize($subject->date) : null;
             },
             function($subject, array &$data, SerializerInterface $serializer) {
                 $subject->bars = array();
                 foreach ($data['bars'] as $key => $value) {
                     $subject->bars[$key] = $serializer->deserialize('Spray\Serializer\TestAssets\Bar', $data['bars'][$key]);
                 }
-                $subject->baz = $serializer->deserialize('Spray\Serializer\TestAssets\Baz', $data['baz']);
-                $subject->date = $serializer->deserialize('DateTime', $data['date']);
+                $subject->baz = isset($data['baz']) ? $serializer->deserialize('Spray\Serializer\TestAssets\Baz', $data['baz']) : null;
+                $subject->date = isset($data['date']) ? $serializer->deserialize('DateTime', $data['date']) : null;
             },
             'Spray\Serializer\TestAssets\Foo'
         );

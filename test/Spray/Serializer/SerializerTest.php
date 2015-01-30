@@ -59,6 +59,28 @@ class SerializerTest extends PHPUnit_Framework_TestCase
         );
     }
     
+    public function testSerializeWithMissingValues()
+    {
+        $subject = new Foo(
+            array(new Bar('foobar')),
+            new Baz('foobar')
+        );
+        $this->assertEquals(
+            array(
+                'bars' => array(
+                    array(
+                        'foobar' => 'foobar'
+                    )
+                ),
+                'baz' => array(
+                    'foobar' => 'foobar'
+                ),
+                'date' => null,
+            ),
+            $this->buildSerializer()->serialize($subject)
+        );
+    }
+    
     public function testDeserializeInheritedSubject()
     {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', '2015-01-01 12:00:00');

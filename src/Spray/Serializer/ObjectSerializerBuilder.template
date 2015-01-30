@@ -16,7 +16,7 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
 <?php foreach ($properties as $property): ?>
 <?php if ($this->hasTargetAnnotation($property)): ?>
 <?php if ($this->isTargetObject($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = $serializer->serialize($subject-><?php echo $property->getName() ?>);
+                $data['<?php echo $property->getName() ?>'] = isset($subject-><?php echo $property->getName() ?>) ? $serializer->serialize($subject-><?php echo $property->getName() ?>) : null;
 <?php elseif ($this->isTargetArray($property)): ?>
 <?php if ($this->isTargetArrayWithObjects($property)): ?>
                 $data['<?php echo $property->getName() ?>'] = array();
@@ -36,7 +36,7 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
 <?php foreach ($properties as $property): ?>
 <?php if ($this->hasTargetAnnotation($property)): ?>
 <?php if ($this->isTargetObject($property)): ?>
-                $subject-><?php echo $property->getName() ?> = $serializer->deserialize('<?php echo $this->getTargetClass($property) ?>', $data['<?php echo $property->getName() ?>']);
+                $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? $serializer->deserialize('<?php echo $this->getTargetClass($property) ?>', $data['<?php echo $property->getName() ?>']) : null;
 <?php elseif ($this->isTargetArray($property)): ?>
 <?php if ($this->isTargetArrayWithObjects($property)): ?>
                 $subject-><?php echo $property->getName() ?> = array();
