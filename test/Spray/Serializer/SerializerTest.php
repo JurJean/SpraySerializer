@@ -20,6 +20,18 @@ class SerializerTest extends PHPUnit_Framework_TestCase
         return new Serializer($locator);
     }
     
+    public function testFailIfSerializedIsNotAnObject()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->buildSerializer()->serialize('foo');
+    }
+    
+    public function testFailIfDeserializedIsNotAClassName()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->buildSerializer()->deserialize('sdfkjsdfkjshdfjhsdf');
+    }
+    
     public function testSerializeInheritedSubject()
     {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', '2015-01-01 12:00:00');

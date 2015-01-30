@@ -2,7 +2,7 @@
 
 namespace Spray\Serializer;
 
-use ReflectionClass;
+use InvalidArgumentException;
 use Zend\EventManager\EventManagerInterface;
 
 class Serializer implements SerializerInterface
@@ -34,6 +34,12 @@ class Serializer implements SerializerInterface
     
     public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
+        if ( ! class_exists($subject)) {
+            throw new InvalidArgumentException(sprintf(
+                '$subject is not an existing class, %s given',
+                 is_object($subject) ? get_class($subject) : gettype($subject)
+            ));
+        }
         $subject = $this->construct($subject, $data);
         foreach ($this->ancestry($subject) as $class) {
             $this->serializers->locate($class)->deserialize($subject, $data, $this);
@@ -43,6 +49,12 @@ class Serializer implements SerializerInterface
 
     public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
+        if ( ! is_object($subject)) {
+            throw new \InvalidArgumentException(sprintf(
+                '$subject is not an object, %s given',
+                is_string($subject) ? $subject : gettype($subject)
+            ));
+        }
         foreach ($this->ancestry($subject) as $class) {
             $this->serializers->locate($class)->serialize($subject, $data, $this);
         }
