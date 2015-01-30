@@ -27,7 +27,9 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             '%s/ObjectSerializerBuilder.template',
             __DIR__
         );
-        return ob_get_clean();
+        $result = ob_get_clean();
+        var_dump($result);
+        return $result;
     }
     
     protected function properties($subject)
@@ -60,7 +62,7 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
         return $result;
     }
     
-    protected function isTargetObject(PropertyReflection $property)
+    protected function hasTargetAnnotation(PropertyReflection $property)
     {
         if ( ! $property->getDocBlock()) {
             return false;
@@ -68,29 +70,71 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
         if ( ! $property->getDocBlock()->hasTag('var')) {
             return false;
         }
-        
-        $scalar = array(
+        return true;
+    }
+    
+    protected function isTargetScalar(PropertyReflection $property)
+    {
+        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'int',
             'float',
             'double',
             'string',
-            'array'
+        ));
+    }
+    
+    protected function isTargetArray(PropertyReflection $property)
+    {
+        return 'array' === substr($property->getDocBlock()->getTag('var')->getContent(), 0, 5);
+    }
+    
+    protected function isTargetArrayWithObjects(PropertyReflection $property)
+    {
+        return 0 !== preg_match(
+            '|^array<(.*)>|',
+            $property->getDocBlock()->getTag('var')->getContent()
+        );
+    }
+    
+    protected function determineTargetArrayClass(PropertyReflection $property)
+    {
+        $matches = array();
+        preg_match(
+            '|^array<(.*)>|',
+            $property->getDocBlock()->getTag('var')->getContent(),
+            $matches
         );
         
-        if (in_array($property->getDocBlock()->getTag('var')->getContent(), $scalar)) {
-            return false;
+        if (class_exists($matches[1])) {
+            return $matches[1];
         }
-        if (class_exists($property->getDocBlock()->getTag('var')->getContent())) {
-            return true;
-        }
+        
         if (class_exists(sprintf(
             '%s\\%s',
             $property->getDeclaringClass()->getNamespaceName(),
-            $property->getDocBlock()->getTag('var')->getContent()))) {
+            $matches[1]))) {
+            return sprintf(
+                '%s\\%s',
+                $property->getDeclaringClass()->getNamespaceName(),
+                $matches[1]
+            );
+        }
+        throw new RuntimeException(sprintf(
+            'Cannot find target for array<%s>',
+            $matches[1]
+        ));
+    }
+    
+    protected function isTargetObject(PropertyReflection $property)
+    {
+        if (class_exists($property->getDocBlock()->getTag('var')->getContent())) {
             return true;
         }
-        
-        return false;
+        return class_exists(sprintf(
+            '%s\\%s',
+            $property->getDeclaringClass()->getNamespaceName(),
+            $property->getDocBlock()->getTag('var')->getContent()
+        ));
     }
     
     public function getTargetClass($property)

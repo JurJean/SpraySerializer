@@ -1,4 +1,5 @@
 <?php
+
 namespace Spray\Serializer\TestAssets;
 
 use Spray\Serializer\AbstractObjectSerializer;

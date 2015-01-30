@@ -5,6 +5,9 @@ namespace Spray\Serializer;
 use DateTime;
 use PHPUnit_Framework_TestCase;
 use Spray\Serializer\Cache\ArrayCache;
+use Spray\Serializer\TestAssets\Bar;
+use Spray\Serializer\TestAssets\Baz;
+use Spray\Serializer\TestAssets\Foo;
 use Spray\Serializer\TestAssets\InheritedSubject;
 use Spray\Serializer\TestAssets\Subject;
 
@@ -32,31 +35,25 @@ class SerializerTest extends PHPUnit_Framework_TestCase
         $this->buildSerializer()->deserialize('sdfkjsdfkjshdfjhsdf');
     }
     
-    public function testSerializeInheritedSubject()
+    public function testSerialize()
     {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', '2015-01-01 12:00:00');
-        $subject = new InheritedSubject(
-            'foo',
-            'bar',
-            'baz',
-            new Subject(
-                'foo',
-                'bar',
-                'baz'
-            ),
+        $subject = new Foo(
+            array(new Bar('foobar')),
+            new Baz('foobar'),
             $date
         );
         $this->assertEquals(
             array(
-                'foo' => 'foo',
-                'bar' => 'bar',
-                'baz' => 'baz',
-                'foobar' => array(
-                    'foo' => 'foo',
-                    'bar' => 'bar',
-                    'baz' => 'baz',
+                'bars' => array(
+                    array(
+                        'foobar' => 'foobar'
+                    )
                 ),
-                'barbaz' => '2015-01-01 12:00:00'
+                'baz' => array(
+                    'foobar' => 'foobar'
+                ),
+                'date' => '2015-01-01 12:00:00'
             ),
             $this->buildSerializer()->serialize($subject)
         );
