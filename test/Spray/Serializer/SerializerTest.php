@@ -39,7 +39,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', '2015-01-01 12:00:00');
         $subject = new Foo(
-            array(new Bar('foobar')),
+            array(new Bar('foobar'), new Baz('foobar')),
             new Baz('foobar'),
             $date
         );
@@ -47,13 +47,20 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             array(
                 'bars' => array(
                     array(
-                        'foobar' => 'foobar'
+                        'foobar' => 'foobar',
+                        '__type' => 'Spray\Serializer\TestAssets\Bar'
+                    ),
+                    array(
+                        'foobar' => 'foobar',
+                        '__type' => 'Spray\Serializer\TestAssets\Baz'
                     )
                 ),
                 'baz' => array(
-                    'foobar' => 'foobar'
+                    'foobar' => 'foobar',
+                    '__type' => 'Spray\Serializer\TestAssets\Baz'
                 ),
-                'date' => '2015-01-01 12:00:00'
+                'date' => '2015-01-01 12:00:00',
+                '__type' => 'Spray\Serializer\TestAssets\Foo'
             ),
             $this->buildSerializer()->serialize($subject)
         );
@@ -69,13 +76,16 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             array(
                 'bars' => array(
                     array(
-                        'foobar' => 'foobar'
+                        'foobar' => 'foobar',
+                        '__type' => 'Spray\Serializer\TestAssets\Bar'
                     )
                 ),
                 'baz' => array(
-                    'foobar' => 'foobar'
+                    'foobar' => 'foobar',
+                    '__type' => 'Spray\Serializer\TestAssets\Baz'
                 ),
                 'date' => null,
+                '__type' => 'Spray\Serializer\TestAssets\Foo'
             ),
             $this->buildSerializer()->serialize($subject)
         );
@@ -85,19 +95,26 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', '2015-01-01 12:00:00');
         $data = array(
-            'foo' => 'foo',
-            'bar' => 'bar',
-            'baz' => 'baz',
-            'foobar' => array(
-                'foo' => 'foo',
-                'bar' => 'bar',
-                'baz' => 'baz',
+            'bars' => array(
+                array(
+                    'foobar' => 'foobar',
+                    '__type' => 'Spray\Serializer\TestAssets\Bar'
+                ),
+                array(
+                    'foobar' => 'foobar',
+                    '__type' => 'Spray\Serializer\TestAssets\Baz'
+                )
             ),
-            'barbaz' => '2015-01-01 12:00:00'
+            'baz' => array(
+                'foobar' => 'foobar',
+                '__type' => 'Spray\Serializer\TestAssets\Baz'
+            ),
+            'date' => '2015-01-01 12:00:00',
+            '__type' => 'Spray\Serializer\TestAssets\Foo'
         );
         $this->assertEquals(
-            new InheritedSubject('foo', 'bar', 'baz', new Subject('foo', 'bar', 'baz'), $date),
-            $this->buildSerializer()->deserialize('Spray\Serializer\TestAssets\InheritedSubject', $data)
+            new Foo(array(new Bar('foobar'), new Baz('foobar')), new Baz('foobar'), $date),
+            $this->buildSerializer()->deserialize('Spray\Serializer\TestAssets\Foo', $data)
         );
     }
 }

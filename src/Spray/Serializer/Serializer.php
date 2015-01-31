@@ -34,6 +34,9 @@ class Serializer implements SerializerInterface
     
     public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
+        if (isset($data['__type'])) {
+            $subject = $data['__type'];
+        }
         if ( ! class_exists($subject)) {
             throw new InvalidArgumentException(sprintf(
                 '$subject is not an existing class, %s given',
@@ -56,6 +59,7 @@ class Serializer implements SerializerInterface
             ));
         }
         foreach ($this->ancestry($subject) as $class) {
+            $data['__type'] = get_class($subject);
             $this->serializers->locate($class)->serialize($subject, $data, $this);
         }
         return $data;

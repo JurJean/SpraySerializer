@@ -27,9 +27,7 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             '%s/ObjectSerializerBuilder.template',
             __DIR__
         );
-        $result = ob_get_clean();
-        var_dump($result);
-        return $result;
+        return ob_get_clean();
     }
     
     protected function properties($subject)
