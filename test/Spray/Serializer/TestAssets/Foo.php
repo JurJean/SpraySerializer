@@ -7,9 +7,9 @@ use DateTime;
 class Foo
 {
     /**
-     * @var array<Bar>
+     * @var BarCollection
      */
-    private $bars = array();
+    private $bars;
     
     /**
      * @var Baz
@@ -21,7 +21,7 @@ class Foo
      */
     private $date;
     
-    public function __construct(array $bars, Baz $baz, DateTime $date = null)
+    public function __construct(BarCollection $bars = null, Baz $baz = null, DateTime $date = null)
     {
         $this->bars = $bars;
         $this->baz = $baz;
