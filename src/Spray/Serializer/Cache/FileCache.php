@@ -32,8 +32,9 @@ class FileCache implements CacheInterface
                 $this->normalizePath($subject)
             );
         }
+        $class = $this->normalizeClass($subject);
         require_once($this->normalizePath($subject));
-        return new $subject;
+        return new $class;
     }
 
     public function save($subject, $result)
@@ -41,15 +42,20 @@ class FileCache implements CacheInterface
         $this->filesystem->dumpFile($this->normalizePath($subject), $result);
     }
     
-    protected function normalizePath($subject)
+    protected function normalizeClass($subject)
     {
         if (is_object($subject)) {
             $subject = get_class($subject);
         }
+        return $subject . 'Serializer';
+    }
+    
+    protected function normalizePath($subject)
+    {
         return sprintf(
             '%s/%s.php',
             $this->path,
-            str_replace('\\', '_', $subject)
+            str_replace('\\', '_', $this->normalizeClass($subject))
         );
     }
 }

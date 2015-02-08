@@ -37,7 +37,7 @@ class FileCacheTest extends PHPUnit_Framework_TestCase
     {
         $this->filesystem->expects($this->once())
             ->method('exists')
-            ->with($this->equalTo('/tmp/Foo_Bar.php'))
+            ->with($this->equalTo('/tmp/Foo_BarSerializer.php'))
             ->will($this->returnValue(false));
         $this->assertFalse($this->createCache()->exists('Foo\Bar'));
     }
@@ -46,7 +46,7 @@ class FileCacheTest extends PHPUnit_Framework_TestCase
     {
         $this->filesystem->expects($this->once())
             ->method('exists')
-            ->with($this->equalTo('/tmp/Foo_Bar.php'))
+            ->with($this->equalTo('/tmp/Foo_BarSerializer.php'))
             ->will($this->returnValue(true));
         $this->assertTrue($this->createCache()->exists('Foo\Bar'));
     }
@@ -56,7 +56,7 @@ class FileCacheTest extends PHPUnit_Framework_TestCase
         $this->filesystem->expects($this->once())
             ->method('dumpFile')
             ->with(
-                $this->equalTo('/tmp/Foo_Bar.php'),
+                $this->equalTo('/tmp/Foo_BarSerializer.php'),
                 $this->equalTo('foobar'));
         $this->createCache()->save('Foo_Bar', 'foobar');
     }
@@ -66,12 +66,14 @@ class FileCacheTest extends PHPUnit_Framework_TestCase
         $className = uniqid('Tmp');
         $this->filesystem->expects($this->once())
             ->method('exists')
-            ->with($this->equalTo('/tmp/' . $className . '.php'))
+            ->with($this->equalTo('/tmp/' . $className . 'Serializer.php'))
             ->will($this->returnValue(true));
-        file_put_contents('/tmp/' . $className . '.php', '<?php class ' . $className . ' {}');
+        file_put_contents('/tmp/' . $className . 'Serializer.php', '<?php class ' . $className . 'Serializer {}');
+        $serializer = $this->createCache()->load($className);
         $this->assertInstanceOf(
-            $className,
-            $this->createCache()->load($className));
-        unlink('/tmp/' . $className . '.php');
+            $className. 'Serializer',
+            $serializer
+        );
+        unlink('/tmp/' . $className . 'Serializer.php');
     }
 }
