@@ -2,7 +2,7 @@
 
 namespace Spray\Serializer\TestAssets;
 
-class Baz extends Bar
+final class Baz extends Bar
 {
     private $arrays = array(
         'key' => 'value',

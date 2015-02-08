@@ -26,6 +26,16 @@ class ObjectSerializerBuilderTest extends PHPUnit_Framework_TestCase
         );
     }
     
+    public function testBuildBar()
+    {
+        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
+        
+        $this->assertEquals(
+            file_get_contents(__DIR__ . '/TestAssets/BarSerializer.php'),
+            $builder->build('Spray\Serializer\TestAssets\Bar')
+        );
+    }
+    
     public function testBuildBarCollection()
     {
         $builder = new ObjectSerializerBuilder(new ReflectionRegistry());

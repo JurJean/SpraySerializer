@@ -26,6 +26,8 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
 <?php else: ?>
                 $data['<?php echo $property->getName() ?>'] = $subject-><?php echo $property->getName() ?>;
 <?php endif; ?>
+<?php else: ?>
+                $data['<?php echo $property->getName() ?>'] = $subject-><?php echo $property->getName() ?>;
 <?php endif; ?>
 <?php else: ?>
                 $data['<?php echo $property->getName() ?>'] = $subject-><?php echo $property->getName() ?>;
@@ -44,8 +46,10 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
                     $subject-><?php echo $property->getName() ?>[$key] = $serializer->deserialize('Spray\Serializer\TestAssets\Bar', $data['<?php echo $property->getName() ?>'][$key]);
                 }
 <?php else: ?>
-                
+                $subject-><?php echo $property->getName() ?> = $data['<?php echo $property->getName() ?>'];
 <?php endif; ?>
+<?php else: ?>
+                $subject-><?php echo $property->getName() ?> = $data['<?php echo $property->getName() ?>'];
 <?php endif ?>
 <?php else: ?>
                 $subject-><?php echo $property->getName() ?> = $data['<?php echo $property->getName() ?>'];
