@@ -55,4 +55,14 @@ class ObjectSerializerBuilderTest extends PHPUnit_Framework_TestCase
             $builder->build('Spray\Serializer\TestAssets\HasInterfaceRelation')
         );
     }
+    
+    public function testBuildScalar()
+    {
+        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
+        
+        $this->assertEquals(
+            file_get_contents(__DIR__ . '/TestAssets/ScalarSerializer.php'),
+            $builder->build('Spray\Serializer\TestAssets\Scalar')
+        );
+    }
 }

@@ -73,11 +73,46 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
     
     protected function isTargetScalar(PropertyReflection $property)
     {
+        return $this->isTargetString($property)
+            || $this->isTargetInteger($property)
+            || $this->isTargetDouble($property)
+            || $this->isTargetFloat($property);
+    }
+    
+    protected function isTargetString(PropertyReflection $property)
+    {
+        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
+            'string',
+        ));
+    }
+    
+    protected function isTargetInteger(PropertyReflection $property)
+    {
         return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'int',
-            'float',
+            'integer'
+        ));
+    }
+    
+    protected function isTargetDouble(PropertyReflection $property)
+    {
+        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'double',
-            'string',
+        ));
+    }
+    
+    protected function isTargetFloat(PropertyReflection $property)
+    {
+        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
+            'float',
+        ));
+    }
+    
+    protected function isTargetBoolean(PropertyReflection $property)
+    {
+        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
+            'boolean',
+            'bool'
         ));
     }
     

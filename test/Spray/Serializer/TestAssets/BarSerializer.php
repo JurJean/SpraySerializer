@@ -11,10 +11,10 @@ class BarSerializer extends AbstractObjectSerializer
     {
         parent::__construct(
             function($subject, array &$data, SerializerInterface $serializer) {
-                $data['foobar'] = $subject->foobar;
+                $data['foobar'] = (string) $subject->foobar;
             },
             function($subject, array &$data, SerializerInterface $serializer) {
-                $subject->foobar = $data['foobar'];
+                $subject->foobar = (string) $data['foobar'];
             },
             'Spray\Serializer\TestAssets\Bar'
         );
