@@ -45,4 +45,14 @@ class ObjectSerializerBuilderTest extends PHPUnit_Framework_TestCase
             $builder->build('Spray\Serializer\TestAssets\BarCollection')
         );
     }
+    
+    public function testBuildHasInterfaceRelation()
+    {
+        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
+        
+        $this->assertEquals(
+            file_get_contents(__DIR__ . '/TestAssets/HasInterfaceRelationSerializer.php'),
+            $builder->build('Spray\Serializer\TestAssets\HasInterfaceRelation')
+        );
+    }
 }

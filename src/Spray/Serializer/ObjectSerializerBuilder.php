@@ -125,14 +125,17 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
     
     protected function isTargetObject(PropertyReflection $property)
     {
-        if (class_exists($property->getDocBlock()->getTag('var')->getContent())) {
+        if (class_exists($property->getDocBlock()->getTag('var')->getContent())
+            || interface_exists($property->getDocBlock()->getTag('var')->getContent())) {
             return true;
         }
-        return class_exists(sprintf(
+        $className = sprintf(
             '%s\\%s',
             $property->getDeclaringClass()->getNamespaceName(),
             $property->getDocBlock()->getTag('var')->getContent()
-        ));
+        );
+        return class_exists($className)
+            || interface_exists($className);
     }
     
     public function getTargetClass($property)
@@ -144,7 +147,8 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             ));
         }
         
-        if (class_exists($property->getDocBlock()->getTag('var')->getContent())) {
+        if (class_exists($property->getDocBlock()->getTag('var')->getContent())
+            || interface_exists($property->getDocBlock()->getTag('var')->getContent())) {
             return $property->getDocBlock()->getTag('var')->getContent();
         }
         
