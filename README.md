@@ -124,7 +124,7 @@ better off using the FileCache.
 The file cache actually writes the generated serialization code to plain php
 files for later use.
 
-Below is how you'd bootstrap the array cache for the serializer:
+Below is how you'd bootstrap the file cache for the serializer:
 
     use Symfony\Component\Filesystem\Filesystem;
 
