@@ -91,3 +91,49 @@ Now we can serialize almost any object to an array and back to an object.
     //     string(6) "Street"
     //   }
     // }
+
+Almost any object
+-----------------
+
+There're some limitations to the implemented serialization method. For instance,
+deserializing a DateTime(Immutable) object is not possible. For this reason,
+specialized serializers are added. You'll need to add these to the
+SerializerRegistry in your application bootstrap like so:
+
+    $registry = new SerializerRegistry();
+    $registry->add(new DateTimeSerializer());
+    $registry->add(new DateTimeImmutableSerializer());
+    
+    $serializer = new Serializer(
+        new SerializerLocator(
+            $registry,
+            new ObjectSerializerBuilder(
+                new ReflectionRegistry()
+            ),
+            new ArrayCache()
+        )
+    );
+
+Caching methods
+---------------
+
+The library provides two methods of caching: array and file. The array cache is
+primarily useful for testing/development purposes. For production however, you're
+better off using the FileCache.
+
+The file cache actually writes the generated serialization code to plain php
+files for later use.
+
+Below is how you'd bootstrap the array cache for the serializer:
+
+    use Symfony\Component\Filesystem\Filesystem;
+
+    $serializer = new Serializer(
+        new SerializerLocator(
+            $registry,
+            new ObjectSerializerBuilder(
+                new ReflectionRegistry()
+            ),
+            new FileCache(new Filesystem(), '/path/to/cache/directory')
+        )
+    );
