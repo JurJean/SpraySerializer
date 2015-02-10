@@ -2,9 +2,7 @@
 
 namespace Spray\Serializer;
 
-use DateTime;
-
-class DateTimeSerializer extends AbstractObjectSerializer
+class DateTimeImmutableSerializer extends DateTimeSerializer
 {
     /**
      * @var string
@@ -24,7 +22,7 @@ class DateTimeSerializer extends AbstractObjectSerializer
             function($subject, &$data, SerializerInterface $serializer) use ($format) {
                 return $subject;
             },
-            'DateTime'
+            'DateTimeImmutable'
         );
     }
     
@@ -33,6 +31,6 @@ class DateTimeSerializer extends AbstractObjectSerializer
      */
     public function construct($subject, &$data = array())
     {
-        return DateTime::createFromFormat($this->format, $data);
+        return DateTimeImmutable::createFromFormat($this->format, $data);
     }
 }
