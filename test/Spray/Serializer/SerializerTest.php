@@ -180,4 +180,19 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             $this->buildSerializer()->deserialize('Spray\Serializer\TestAssets\Foo', $data)
         );
     }
+    
+    public function testDeserializeEmptyDateTime()
+    {
+        $expected = new Foo();
+        $data = array(
+            'date' => null,
+        );
+        $this->assertEquals(
+            $this->buildSerializer()->deserialize(
+                'Spray\Serializer\TestAssets\Foo',
+                $data
+            ),
+            $expected
+        );
+    }
 }

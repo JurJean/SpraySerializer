@@ -60,7 +60,7 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
 <?php case ($this->isTargetArray($property) && $this->isTargetArrayWithObjects($property)): ?>
                 $subject-><?php echo $property->getName() ?> = array();
                 foreach ($data['<?php echo $property->getName() ?>'] as $key => $value) {
-                    $subject-><?php echo $property->getName() ?>[$key] = $serializer->deserialize('Spray\Serializer\TestAssets\Bar', $data['<?php echo $property->getName() ?>'][$key]);
+                    $subject-><?php echo $property->getName() ?>[$key] = $serializer->deserialize('<?php echo $this->determineTargetArrayClass($property) ?>', $data['<?php echo $property->getName() ?>'][$key]);
                 }
 <?php break; ?>
 <?php case ($this->isTargetArray($property) && ! $this->isTargetArrayWithObjects($property)): ?>
