@@ -12,11 +12,6 @@ class Serializer implements SerializerInterface
      */
     private $serializers;
     
-    /**
-     * @var EventManagerInterface
-     */
-    private $events;
-    
     public function __construct(SerializerLocatorInterface $serializers)
     {
         $this->serializers = $serializers;

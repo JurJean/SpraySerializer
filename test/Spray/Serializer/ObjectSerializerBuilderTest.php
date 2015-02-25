@@ -65,4 +65,14 @@ class ObjectSerializerBuilderTest extends PHPUnit_Framework_TestCase
             $builder->build('Spray\Serializer\TestAssets\Scalar')
         );
     }
+    
+    public function testBuildWithOtherNamespace()
+    {
+        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
+        
+        $this->assertEquals(
+            file_get_contents(__DIR__ . '/TestAssets/WithOtherNamespaceSerializer.php'),
+            $builder->build('Spray\Serializer\TestAssets\WithOtherNamespace')
+        );
+    }
 }

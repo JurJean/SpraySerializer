@@ -3,6 +3,7 @@
 namespace Spray\Serializer;
 
 use RuntimeException;
+use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\PropertyReflection;
 
 class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
@@ -138,20 +139,10 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             $matches
         );
         
-        if (class_exists($matches[1])) {
-            return $matches[1];
+        if (($class = $this->findClass($property->getDeclaringClass(), $matches[1]))) {
+            return $class;
         }
         
-        if (class_exists(sprintf(
-            '%s\\%s',
-            $property->getDeclaringClass()->getNamespaceName(),
-            $matches[1]))) {
-            return sprintf(
-                '%s\\%s',
-                $property->getDeclaringClass()->getNamespaceName(),
-                $matches[1]
-            );
-        }
         throw new RuntimeException(sprintf(
             'Cannot find target for array<%s>',
             $matches[1]
@@ -160,17 +151,12 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
     
     protected function isTargetObject(PropertyReflection $property)
     {
-        if (class_exists($property->getDocBlock()->getTag('var')->getContent())
-            || interface_exists($property->getDocBlock()->getTag('var')->getContent())) {
+        if (($class = $this->findClass(
+            $property->getDeclaringClass(),
+            $property->getDocBlock()->getTag('var')->getContent()))) {
             return true;
         }
-        $className = sprintf(
-            '%s\\%s',
-            $property->getDeclaringClass()->getNamespaceName(),
-            $property->getDocBlock()->getTag('var')->getContent()
-        );
-        return class_exists($className)
-            || interface_exists($className);
+        return false;
     }
     
     public function getTargetClass($property)
@@ -181,16 +167,63 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
                 $property
             ));
         }
-        
-        if (class_exists($property->getDocBlock()->getTag('var')->getContent())
-            || interface_exists($property->getDocBlock()->getTag('var')->getContent())) {
-            return $property->getDocBlock()->getTag('var')->getContent();
-        }
-        
-        return sprintf(
-            '%s\\%s',
-            $property->getDeclaringClass()->getNamespaceName(),
+        return $this->findClass(
+            $property->getDeclaringClass(),
             $property->getDocBlock()->getTag('var')->getContent()
         );
+    }
+    
+    protected function findClass(ClassReflection $reflection, $class)
+    {
+        if (($className = $this->findClassInCurrentNamespace($reflection, $class))) {
+            return $className;
+        }
+        if (($className = $this->findClassInImports($reflection, $class))) {
+            return $className;
+        }
+        if (($className = $this->findClassInRoot($class))) {
+            return $className;
+        }
+    }
+    
+    protected function findClassInCurrentNamespace(ClassReflection $reflection, $class)
+    {
+        $fqn = sprintf(
+            '%s\\%s',
+            $reflection->getNamespaceName(),
+            $class
+        );
+        if (class_exists($fqn) || interface_exists($fqn)) {
+            return $fqn;
+        }
+    }
+    
+    protected function findClassInImports(ClassReflection $reflection, $class)
+    {
+        foreach ($this->findImports($reflection) as $import) {
+            if ($this->reflections->getReflection($import)->getShortName() === $class) {
+                return $import;
+            }
+        }
+    }
+    
+    protected function findClassInRoot($class)
+    {
+        if (class_exists($class) || interface_exists($class)) {
+            return $class;
+        }
+    }
+    
+    protected function findImports(ClassReflection $reflection)
+    {
+        $matches = array();
+        
+        preg_match_all(
+            '/^use (.*)\;$/im',
+            file_get_contents($reflection->getFileName()),
+            $matches
+        );
+        
+        return $matches[1];
     }
 }

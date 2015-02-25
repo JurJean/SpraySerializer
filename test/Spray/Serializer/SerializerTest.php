@@ -9,7 +9,10 @@ use Spray\Serializer\TestAssets\Bar;
 use Spray\Serializer\TestAssets\BarCollection;
 use Spray\Serializer\TestAssets\Baz;
 use Spray\Serializer\TestAssets\Foo;
+use Spray\Serializer\TestAssets\OtherNamespace\Foo as Foo2;
+use Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace;
 use Spray\Serializer\TestAssets\Subject;
+use Spray\Serializer\TestAssets\WithOtherNamespace;
 
 class SerializerTest extends PHPUnit_Framework_TestCase
 {
@@ -193,6 +196,38 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 $data
             ),
             $expected
+        );
+    }
+    
+    public function testSerializeDependencyFromOtherNamespace()
+    {
+        $object = new WithOtherNamespace(new InOtherNamespace('foo'));
+        $this->assertEquals(
+            array(
+                '__type' => 'Spray\Serializer\TestAssets\WithOtherNamespace',
+                'foo' => array(
+                    '__type' => 'Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace',
+                    'foo' => 'foo'
+                ),
+            ),
+            $this->buildSerializer()->serialize($object)
+        );
+    }
+    
+    public function testDeserializeDependencyFromOtherNamespace()
+    {
+        $data = array(
+            'foo' => array(
+                'foo' => 'foo'
+            ),
+        );
+        $object = new WithOtherNamespace(new InOtherNamespace('foo'));
+        $this->assertEquals(
+            $object,
+            $this->buildSerializer()->deserialize(
+                'Spray\Serializer\TestAssets\WithOtherNamespace',
+                $data
+            )
         );
     }
 }
