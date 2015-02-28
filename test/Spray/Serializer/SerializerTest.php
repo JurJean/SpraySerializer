@@ -180,4 +180,15 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             $this->buildSerializer()->deserialize('Spray\Serializer\TestAssets\Foo', $data)
         );
     }
+    
+    
+    public function testDeserializeNullArray()
+    {
+        $expected = new BarCollection(array());
+        $data = array();
+        $this->assertEquals(
+            $expected,
+            $this->buildSerializer()->deserialize('Spray\Serializer\TestAssets\BarCollection', $data)
+        );
+    }
 }

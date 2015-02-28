@@ -18,8 +18,10 @@ class BarCollectionSerializer extends AbstractObjectSerializer
             },
             function($subject, array &$data, SerializerInterface $serializer) {
                 $subject->items = array();
-                foreach ($data['items'] as $key => $value) {
-                    $subject->items[$key] = $serializer->deserialize('Spray\Serializer\TestAssets\Bar', $data['items'][$key]);
+                if (isset($data['items'])) {
+                    foreach ($data['items'] as $key => $value) {
+                        $subject->items[$key] = $serializer->deserialize('Spray\Serializer\TestAssets\Bar', $data['items'][$key]);
+                    }
                 }
             },
             'Spray\Serializer\TestAssets\BarCollection'

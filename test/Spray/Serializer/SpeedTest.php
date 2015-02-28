@@ -32,7 +32,7 @@ class SpeedTest extends PHPUnit_Framework_TestCase
                 $date
             ));
         }
-        $this->assertLessThan(1, microtime(true) - $time);
+        $this->assertLessThan(.1, microtime(true) - $time);
     }
     
     public function testDeserializationSpeed()
@@ -54,6 +54,6 @@ class SpeedTest extends PHPUnit_Framework_TestCase
         for ($i = 0; $i < 10000; $i++) {
             $serializer->deserialize('Spray\Serializer\TestAssets\InheritedSubject', $data);
         }
-        $this->assertLessThan(1, microtime(true) - $time);
+        $this->assertLessThan(.1, microtime(true) - $time);
     }
 }

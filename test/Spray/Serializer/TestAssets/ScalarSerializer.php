@@ -18,6 +18,7 @@ class ScalarSerializer extends AbstractObjectSerializer
                 $data['float'] = (float) $subject->float;
                 $data['boolean'] = (bool) $subject->boolean;
                 $data['bool'] = (bool) $subject->bool;
+                $data['array'] = (array) $subject->array;
             },
             function($subject, array &$data, SerializerInterface $serializer) {
                 $subject->string = (string) $data['string'];
@@ -27,6 +28,7 @@ class ScalarSerializer extends AbstractObjectSerializer
                 $subject->float = (float) $data['float'];
                 $subject->boolean = (bool) $data['boolean'];
                 $subject->bool = (bool) $data['bool'];
+                $subject->array = isset($data['array']) ? (array) $data['array'] : array();
             },
             'Spray\Serializer\TestAssets\Scalar'
         );
