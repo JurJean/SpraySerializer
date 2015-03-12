@@ -3,12 +3,14 @@
 namespace Spray\Serializer;
 
 use DateTime;
+use DateTimeImmutable;
 use PHPUnit_Framework_TestCase;
 use Spray\Serializer\Cache\ArrayCache;
 use Spray\Serializer\TestAssets\Bar;
 use Spray\Serializer\TestAssets\BarCollection;
 use Spray\Serializer\TestAssets\Baz;
 use Spray\Serializer\TestAssets\Foo;
+use Spray\Serializer\TestAssets\HasDateTimeImmutable;
 use Spray\Serializer\TestAssets\OtherNamespace\Foo as Foo2;
 use Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace;
 use Spray\Serializer\TestAssets\Subject;
@@ -20,6 +22,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     {
         $registry = new SerializerRegistry();
         $registry->add(new DateTimeSerializer());
+        $registry->add(new DateTimeImmutableSerializer());
         $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
         $cache = new ArrayCache();
         $locator = new SerializerLocator($registry, $builder, $cache);
@@ -238,6 +241,18 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 'Spray\Serializer\TestAssets\WithOtherNamespace',
                 $data
             )
+        );
+    }
+    
+    public function testSerializeHasDateTimeImmutable()
+    {
+        $object = new HasDateTimeImmutable(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2011-01-01 12:00:00'));
+        $this->assertEquals(
+            array(
+                '__type' => 'Spray\Serializer\TestAssets\HasDateTimeImmutable',
+                'dateTime' => '2011-01-01 12:00:00',
+            ),
+            $this->buildSerializer()->serialize($object)
         );
     }
 }

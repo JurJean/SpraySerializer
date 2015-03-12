@@ -2,7 +2,9 @@
 
 namespace Spray\Serializer;
 
-class DateTimeImmutableSerializer extends DateTimeSerializer
+use DateTimeImmutable;
+
+class DateTimeImmutableSerializer extends AbstractObjectSerializer
 {
     /**
      * @var string
