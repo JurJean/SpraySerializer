@@ -44,7 +44,7 @@ class DateTimeImmutableSerializer extends AbstractObjectSerializer
      */
     protected function bindDeserializer()
     {
-        return function($subject, array &$data, SerializerInterface $serializer) {
+        return function($subject, &$data, SerializerInterface $serializer) {
             return $subject;
         };
     }
