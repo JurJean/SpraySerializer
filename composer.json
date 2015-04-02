@@ -10,13 +10,13 @@
         "phpunit/phpunit": "4.4.*"
     },
     "autoload": {
-        "psr-0": {
-            "Spray\\Serializer": "src/"
+        "psr-4": {
+            "Spray\\Serializer\\": "src/"
         }
     },
     "autoload-dev": {
-        "psr-0": {
-            "Spray\\Serializer\\TestAssets": "test/"
+        "psr-4": {
+            "Spray\\Serializer\\TestAssets\\": "test/TestAssets"
         }
     },
     "extra": {
