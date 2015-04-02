@@ -17,6 +17,7 @@ How to use
 
 Let's start with a class to serialize. Note that the annotations hint the serializer, and that they're required for deserializing objects.
 
+```php
     /**
      * Person
      */
@@ -54,9 +55,11 @@ Let's start with a class to serialize. Note that the annotations hint the serial
             $this->street = (string) $street;
         }
     }
+```
 
 Then we'll initialize the serializer.
 
+```php
     $serializer = new Serializer(
         new SerializerLocator(
             new SerializerRegistry(),
@@ -66,9 +69,11 @@ Then we'll initialize the serializer.
             new ArrayCache()
         )
     );
+```
 
 Now we can serialize almost any object to an array and back to an object.
 
+```php
     $data = $serializer->serialize(new Person('Name', new Address('Street')));
     var_dump($data);
     // array(2) {
@@ -93,6 +98,7 @@ Now we can serialize almost any object to an array and back to an object.
     //     string(6) "Street"
     //   }
     // }
+```
 
 Almost any object
 -----------------
@@ -102,6 +108,7 @@ deserializing a DateTime(Immutable) object is not possible. For this reason,
 specialized serializers are added. You'll need to add these to the
 SerializerRegistry in your application bootstrap like so:
 
+```php
     $registry = new SerializerRegistry();
     $registry->add(new DateTimeSerializer());
     $registry->add(new DateTimeImmutableSerializer());
@@ -115,6 +122,7 @@ SerializerRegistry in your application bootstrap like so:
             new ArrayCache()
         )
     );
+```
 
 Caching methods
 ---------------
@@ -128,6 +136,7 @@ files for later use.
 
 Below is how you'd bootstrap the file cache for the serializer:
 
+```php
     use Symfony\Component\Filesystem\Filesystem;
 
     $serializer = new Serializer(
@@ -139,3 +148,4 @@ Below is how you'd bootstrap the file cache for the serializer:
             new FileCache(new Filesystem(), '/path/to/cache/directory')
         )
     );
+```
