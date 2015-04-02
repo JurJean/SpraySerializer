@@ -246,6 +246,10 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     
     public function testSerializeHasDateTimeImmutable()
     {
+        if (version_compare(phpversion(), '5.5.0', '<')) {
+            $this->markTestSkipped('This php version does not contain DateTimeImmutable');
+        }
+        
         $object = new HasDateTimeImmutable(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2011-01-01 12:00:00'));
         $this->assertEquals(
             array(
