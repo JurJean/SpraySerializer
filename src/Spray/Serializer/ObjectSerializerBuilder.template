@@ -11,82 +11,88 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
 {
     public function __construct()
     {
-        parent::__construct(
-            function($subject, array &$data, SerializerInterface $serializer) {
+        parent::__construct('<?php echo $reflection->getName(); ?>');
+    }
+    
+    protected function bindSerializer()
+    {
+        return function($subject, array &$data, SerializerInterface $serializer) {
 <?php foreach ($properties as $property): ?>
 <?php switch (true): ?>
 <?php case ( ! $this->hasTargetAnnotation($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = $subject-><?php echo $property->getName() ?>;
+            $data['<?php echo $property->getName() ?>'] = $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
 <?php case ($this->isTargetObject($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = isset($subject-><?php echo $property->getName() ?>) ? $serializer->serialize($subject-><?php echo $property->getName() ?>) : null;
+            $data['<?php echo $property->getName() ?>'] = isset($subject-><?php echo $property->getName() ?>) ? $serializer->serialize($subject-><?php echo $property->getName() ?>) : null;
 <?php break; ?>
 <?php case ($this->isTargetArray($property) && $this->isTargetArrayWithObjects($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = array();
-                foreach ($subject-><?php echo $property->getName() ?> as $key => $value) {
-                    $data['<?php echo $property->getName() ?>'][$key] = $serializer->serialize($value);
-                }
+            $data['<?php echo $property->getName() ?>'] = array();
+            foreach ($subject-><?php echo $property->getName() ?> as $key => $value) {
+                $data['<?php echo $property->getName() ?>'][$key] = $serializer->serialize($value);
+            }
 <?php break; ?>
 <?php case ($this->isTargetArray($property) && ! $this->isTargetArrayWithObjects($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = (array) $subject-><?php echo $property->getName() ?>;
+            $data['<?php echo $property->getName() ?>'] = (array) $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
 <?php case ($this->isTargetString($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = (string) $subject-><?php echo $property->getName() ?>;
+            $data['<?php echo $property->getName() ?>'] = (string) $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
 <?php case ($this->isTargetInteger($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = (int) $subject-><?php echo $property->getName() ?>;
+            $data['<?php echo $property->getName() ?>'] = (int) $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
 <?php case ($this->isTargetDouble($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = (double) $subject-><?php echo $property->getName() ?>;
+            $data['<?php echo $property->getName() ?>'] = (double) $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
 <?php case ($this->isTargetFloat($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = (float) $subject-><?php echo $property->getName() ?>;
+            $data['<?php echo $property->getName() ?>'] = (float) $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
 <?php case ($this->isTargetBoolean($property)): ?>
-                $data['<?php echo $property->getName() ?>'] = (bool) $subject-><?php echo $property->getName() ?>;
+            $data['<?php echo $property->getName() ?>'] = (bool) $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
 <?php endswitch; ?>
 <?php endforeach ?>
-            },
-            function($subject, array &$data, SerializerInterface $serializer) {
+        };
+    }
+    
+    protected function bindDeserializer()
+    {
+        return function($subject, array &$data, SerializerInterface $serializer) {
 <?php foreach ($properties as $property): ?>
 <?php switch (true): ?>
 <?php case ( ! $this->hasTargetAnnotation($property)): ?>
-                $subject-><?php echo $property->getName() ?> = $data['<?php echo $property->getName() ?>'];
+            $subject-><?php echo $property->getName() ?> = $data['<?php echo $property->getName() ?>'];
 <?php break; ?>
 <?php case ($this->isTargetObject($property)): ?>
-                $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? $serializer->deserialize('<?php echo $this->getTargetClass($property) ?>', $data['<?php echo $property->getName() ?>']) : null;
+            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? $serializer->deserialize('<?php echo $this->getTargetClass($property) ?>', $data['<?php echo $property->getName() ?>']) : null;
 <?php break; ?>
 <?php case ($this->isTargetArray($property) && $this->isTargetArrayWithObjects($property)): ?>
-                $subject-><?php echo $property->getName() ?> = array();
-                if (isset($data['<?php echo $property->getName() ?>'])) {
-                    foreach ($data['<?php echo $property->getName() ?>'] as $key => $value) {
-                        $subject-><?php echo $property->getName() ?>[$key] = $serializer->deserialize('<?php echo $this->determineTargetArrayClass($property) ?>', $data['<?php echo $property->getName() ?>'][$key]);
-                    }
+            $subject-><?php echo $property->getName() ?> = array();
+            if (isset($data['<?php echo $property->getName() ?>'])) {
+                foreach ($data['<?php echo $property->getName() ?>'] as $key => $value) {
+                    $subject-><?php echo $property->getName() ?>[$key] = $serializer->deserialize('<?php echo $this->determineTargetArrayClass($property) ?>', $data['<?php echo $property->getName() ?>'][$key]);
                 }
+            }
 <?php break; ?>
 <?php case ($this->isTargetArray($property) && ! $this->isTargetArrayWithObjects($property)): ?>
-                $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? (array) $data['<?php echo $property->getName() ?>'] : array();
+            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? (array) $data['<?php echo $property->getName() ?>'] : array();
 <?php break; ?>
 <?php case ($this->isTargetString($property)): ?>
-                $subject-><?php echo $property->getName() ?> = (string) $data['<?php echo $property->getName() ?>'];
+            $subject-><?php echo $property->getName() ?> = (string) $data['<?php echo $property->getName() ?>'];
 <?php break; ?>
 <?php case ($this->isTargetInteger($property)): ?>
-                $subject-><?php echo $property->getName() ?> = (int) $data['<?php echo $property->getName() ?>'];
+            $subject-><?php echo $property->getName() ?> = (int) $data['<?php echo $property->getName() ?>'];
 <?php break; ?>
 <?php case ($this->isTargetDouble($property)): ?>
-                $subject-><?php echo $property->getName() ?> = (double) $data['<?php echo $property->getName() ?>'];
+            $subject-><?php echo $property->getName() ?> = (double) $data['<?php echo $property->getName() ?>'];
 <?php break; ?>
 <?php case ($this->isTargetFloat($property)): ?>
-                $subject-><?php echo $property->getName() ?> = (float) $data['<?php echo $property->getName() ?>'];
+            $subject-><?php echo $property->getName() ?> = (float) $data['<?php echo $property->getName() ?>'];
 <?php break; ?>
 <?php case ($this->isTargetBoolean($property)): ?>
-                $subject-><?php echo $property->getName() ?> = (bool) $data['<?php echo $property->getName() ?>'];
+            $subject-><?php echo $property->getName() ?> = (bool) $data['<?php echo $property->getName() ?>'];
 <?php break; ?>
 <?php endswitch; ?>
 <?php endforeach ?>
-            },
-            '<?php echo $reflection->getName(); ?>'
-        );
+        };
     }
 }

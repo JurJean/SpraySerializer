@@ -3,7 +3,6 @@
 namespace Spray\Serializer;
 
 use InvalidArgumentException;
-use Zend\EventManager\EventManagerInterface;
 
 class Serializer implements SerializerInterface
 {
@@ -38,11 +37,11 @@ class Serializer implements SerializerInterface
                  is_object($subject) ? get_class($subject) : gettype($subject)
             ));
         }
-        $subject = $this->construct($subject, $data);
-        foreach ($this->ancestry($subject) as $class) {
-            $this->serializers->locate($class)->deserialize($subject, $data, $this);
+        $object = $this->construct($subject, $data);
+        foreach ($this->ancestry($object) as $class) {
+            $this->serializers->locate($class)->deserialize($object, $data, $this);
         }
-        return $subject;
+        return $object;
     }
 
     public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)

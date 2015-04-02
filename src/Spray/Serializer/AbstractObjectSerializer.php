@@ -6,20 +6,41 @@ use Closure;
 
 abstract class AbstractObjectSerializer implements SerializerInterface
 {
+    /**
+     * @var string
+     */
     private $class;
+    
+    /**
+     * @var Closure
+     */
     private $serializer;
+    
+    /**
+     * @var Closure
+     */
     private $deserializer;
-    private $serializationCallback;
-    private $deserializationCallback;
+    
+    /**
+     * @var object
+     */
     private $constructed;
     
-    public function __construct($serializationCallback, $deserializationCallback, $class)
+    /**
+     * @param string $class
+     */
+    public function __construct($class)
     {
-        $this->class = $class;
-        $this->serializationCallback = $serializationCallback;
-        $this->deserializationCallback = $deserializationCallback;
+        $this->class = (string) $class;
     }
     
+    /**
+     * Check if $subject can be serialized.
+     * 
+     * @param mixed $subject
+
+     * @return boolean
+     */
     public function accepts($subject)
     {
         if (is_object($subject)) {
@@ -28,6 +49,16 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return $subject === $this->class;
     }
     
+    /**
+     * Construct a new object.
+     * 
+     * By default a new empty object is deserialized and from then on cloned.
+     * 
+     * @param string $subject The class name of the object to create
+     * @param array  $data    The data to deserialize
+     * 
+     * @return object
+     */
     public function construct($subject, &$data = array())
     {
         if (null === $this->constructed) {
@@ -42,33 +73,93 @@ abstract class AbstractObjectSerializer implements SerializerInterface
         return clone $this->constructed;
     }
 
-    protected function getSerializer()
+    /**
+     * Get a reference to the bound serialization closure.
+     * 
+     * @return Closure
+     */
+    protected function serializer()
     {
         if (null === $this->serializer) {
-            $this->serializer = Closure::bind($this->serializationCallback, null, $this->class);
+            $self = $this;
+            $this->serializer = Closure::bind($this->bindSerializer(), null, $this->class);
         }
         return $this->serializer;
     }
     
+    /**
+     * Return function that fills $data with $subject properties.
+     * 
+     * return function() {
+     *     $data['foo'] = $subject->foo;
+     * };
+     * 
+     * @param object              $subject    The object being serialized
+     * @param array               $data       The data to map properties to
+     * @param SerializerInterface $serializer Pass data to parent serializer
+     * 
+     * @return void
+     */
+    abstract protected function bindSerializer();
+    
+    /**
+     * Turn $subject (object) into $data (array).
+     * 
+     * @param object              $subject
+     * @param array               $data
+     * @param SerializerInterface $serializer
+     * 
+     * @return object
+     */
     public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)
     { 
-        $serialize = $this->getSerializer();
-        $serialize($subject, $data, $serializer);
+        $context = $this->serializer();
+        $context($subject, $data, $serializer);
         return $data;
     }
     
-    protected function getDeserializer()
+    /**
+     * Get a reference to the bound deserialization closure.
+     * 
+     * @return Closure
+     */
+    protected function deserializer()
     {
         if (null === $this->deserializer) {
-            $this->deserializer = Closure::bind($this->deserializationCallback, null, $this->class);
+            $self = $this;
+            $this->deserializer = Closure::bind($this->bindDeserializer(), null, $this->class);
         }
         return $this->deserializer;
     }
     
+    /**
+     * Return function that maps $data to $subject properties.
+     * 
+     * return function($subject, &$data = array(), SerializerInterface $serializer = null) {
+     *     $subject->foo = $data['foo'];
+     * };
+     * 
+     * @param object              $subject    The object being deserialized
+     * @param array               $data       The data to put into properties
+     * @param SerializerInterface $serializer Pass data to parent serializer
+     * 
+     * @return void
+     */
+    abstract protected function bindDeserializer();
+    
+    /**
+     * Turn $data (array) into $subject (object).
+     * 
+     * @param object $subject
+     * @param array $data
+     * @param SerializerInterface $serializer
+     * 
+     * @return object
+     */
     public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
-        $deserialize = $this->getDeserializer();
-        $deserialize($subject, $data, $serializer);
+        $context = $this->deserializer();
+        $context($subject, $data, $serializer);
         return $subject;
     }
 }

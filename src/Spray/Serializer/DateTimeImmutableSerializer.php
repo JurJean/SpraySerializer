@@ -16,16 +16,8 @@ class DateTimeImmutableSerializer extends AbstractObjectSerializer
      */
     public function __construct($format = 'Y-m-d H:i:s')
     {
+        parent::__construct('DateTimeImmutable');
         $this->format = $format;
-        parent::__construct(
-            function($subject, array &$data, SerializerInterface $serializer) use ($format) {
-                $data = $subject->format($format);
-            },
-            function($subject, &$data, SerializerInterface $serializer) use ($format) {
-                return $subject;
-            },
-            'DateTimeImmutable'
-        );
     }
     
     /**
@@ -35,4 +27,26 @@ class DateTimeImmutableSerializer extends AbstractObjectSerializer
     {
         return DateTimeImmutable::createFromFormat($this->format, $data);
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function bindSerializer()
+    {
+        $format = $this->format;
+        return function($subject, &$data, SerializerInterface $serializer) use ($format) {
+            $data = $subject->format($format);
+        };
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function bindDeserializer()
+    {
+        return function($subject, array &$data, SerializerInterface $serializer) {
+            return $subject;
+        };
+    }
+
 }
