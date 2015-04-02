@@ -2,11 +2,18 @@
 
 namespace Spray\Serializer;
 
-use DateTime;
+use DateTimeImmutable;
 use PHPUnit_Framework_TestCase;
 
 class DateTimeImmutableSerializerTest extends PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        if (version_compare(phpversion(), '5.5.0', '<')) {
+            $this->markTestSkipped('This php version does not contain DateTimeImmutable');
+        }
+    }
+    
     public function testSerialize()
     {
         $serializer = new DateTimeImmutableSerializer;
