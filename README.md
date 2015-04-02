@@ -3,6 +3,8 @@ SpraySerializer
 
 Allows easy serialization and deserialization of php objects.
 
+[![Build Status](https://secure.travis-ci.org/JurJean/SpraySerializer.png?branch=master)](http://travis-ci.org/JurJean/SpraySerializer)
+
 Internals
 ---------
 
