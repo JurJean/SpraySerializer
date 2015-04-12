@@ -61,9 +61,10 @@ class Serializer implements SerializerInterface
                 is_string($subject) ? $subject : gettype($subject)
             ));
         }
-        foreach ($this->ancestry($subject) as $class) {
-            $data['__type'] = get_class($subject);
-            $this->serializers->locate($class)->serialize($subject, $data, $this);
+        
+        $data['__type'] = get_class($subject);
+        foreach ($this->ancestry($data['__type']) as $parent) {
+            $this->serializers->locate($parent)->serialize($subject, $data, $this);
         }
         return $data;
     }
