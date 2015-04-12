@@ -23,23 +23,32 @@ class Serializer implements SerializerInterface
     
     public function construct($subject, &$data = array())
     {
-        return $this->serializers->locate($subject)->construct($subject, $data);
+        return $this->serializers->locate((string) $subject)->construct($subject, $data);
     }
     
     public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
         if (isset($data['__type'])) {
-            $subject = $data['__type'];
+            $class = $data['__type'];
+        } else if (is_object($subject)) {
+            $class = get_class($subject);
+        } else if (is_string($subject)) {
+            $class = $subject;
+        } else {
+            throw new InvalidArgumentException(sprintf(
+                'Could not determine class to deserialize to, %s given',
+                 is_object($subject) ? get_class($subject) : gettype($subject)
+            ));
         }
-        if ( ! class_exists($subject)) {
+        if ( ! class_exists($class)) {
             throw new InvalidArgumentException(sprintf(
                 '$subject is not an existing class, %s given',
                  is_object($subject) ? get_class($subject) : gettype($subject)
             ));
         }
-        $object = $this->construct($subject, $data);
-        foreach ($this->ancestry($object) as $class) {
-            $this->serializers->locate($class)->deserialize($object, $data, $this);
+        $object = $this->construct($class, $data);
+        foreach ($this->ancestry($class) as $parent) {
+            $this->serializers->locate($parent)->deserialize($object, $data, $this);
         }
         return $object;
     }
@@ -59,11 +68,8 @@ class Serializer implements SerializerInterface
         return $data;
     }
     
-    public function ancestry($subject)
+    protected function ancestry($subject)
     {
-        if (is_object($subject)) {
-            $subject = get_class($subject);
-        }
         $result = array($subject);
         while (false !== ($subject = get_parent_class($subject))) {
             $result[] = $subject;
