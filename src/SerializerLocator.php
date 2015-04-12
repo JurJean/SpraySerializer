@@ -21,6 +21,11 @@ class SerializerLocator implements SerializerLocatorInterface
      */
     private $cache;
     
+    /**
+     * @var array<SerializerInterface>
+     */
+    private $located = array();
+    
     public function __construct(
         SerializerRegistryInterface $registry,
         ObjectSerializerBuilderInterface $builder,
@@ -33,12 +38,15 @@ class SerializerLocator implements SerializerLocatorInterface
     
     public function locate($subject)
     {
-        if ( ! $this->registry->contains($subject)) {
-            if ( ! $this->cache->exists($subject)) {
-                $this->cache->save($subject, $this->builder->build($subject));
+        if ( ! isset($this->located[$subject])) {
+            if ( ! $this->registry->contains($subject)) {
+                if ( ! $this->cache->exists($subject)) {
+                    $this->cache->save($subject, $this->builder->build($subject));
+                }
+                $this->registry->add($this->cache->load($subject));
             }
-            $this->registry->add($this->cache->load($subject));
+            $this->located[$subject] = $this->registry->find($subject);
         }
-        return $this->registry->find($subject);
+        return $this->located[$subject];
     }
 }
