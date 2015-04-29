@@ -16,6 +16,7 @@ class WithOtherNamespaceSerializer extends AbstractObjectSerializer
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
             $data['foo'] = isset($subject->foo) ? $serializer->serialize($subject->foo) : null;
+            $data['bar'] = isset($subject->bar) ? $serializer->serialize($subject->bar) : null;
         };
     }
     
@@ -23,6 +24,7 @@ class WithOtherNamespaceSerializer extends AbstractObjectSerializer
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
             $subject->foo = isset($data['foo']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['foo']) : null;
+            $subject->bar = isset($data['bar']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['bar']) : null;
         };
     }
 }

@@ -200,6 +200,12 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
     
     protected function findClassInImports(ClassReflection $reflection, $class)
     {
+        foreach ($this->findAliasedImports($reflection) as $alias => $aliasedImport) {
+            if ($alias === $class) {
+                return $aliasedImport;
+            }
+        }
+
         foreach ($this->findImports($reflection) as $import) {
             if ($this->reflections->getReflection($import)->getShortName() === $class) {
                 return $import;
@@ -213,17 +219,38 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             return $class;
         }
     }
-    
+
+    protected function findAliasedImports(ClassReflection $reflection)
+    {
+        $matches = array();
+
+        preg_match_all(
+            '/^use (.*) as (.*)\;$/im',
+            file_get_contents($reflection->getFileName()),
+            $matches
+        );
+
+        $result = array();
+        foreach ($matches[1] as $i => $value) {
+            if ( ! isset($matches[2][$i])) {
+                continue;
+            }
+            $result[$matches[2][$i]] = $matches[1][$i];
+        }
+
+        return $result;
+    }
+
     protected function findImports(ClassReflection $reflection)
     {
         $matches = array();
-        
+
         preg_match_all(
             '/^use (.*)\;$/im',
             file_get_contents($reflection->getFileName()),
             $matches
         );
-        
+
         return $matches[1];
     }
 }

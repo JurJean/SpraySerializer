@@ -214,13 +214,17 @@ class SerializerTest extends PHPUnit_Framework_TestCase
     
     public function testSerializeDependencyFromOtherNamespace()
     {
-        $object = new WithOtherNamespace(new InOtherNamespace('foo'));
+        $object = new WithOtherNamespace(new InOtherNamespace('foo'), new InOtherNamespace('bar'));
         $this->assertEquals(
             array(
                 '__type' => 'Spray\Serializer\TestAssets\WithOtherNamespace',
                 'foo' => array(
                     '__type' => 'Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace',
                     'foo' => 'foo'
+                ),
+                'bar' => array(
+                    '__type' => 'Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace',
+                    'foo' => 'bar'
                 ),
             ),
             $this->buildSerializer()->serialize($object)
@@ -233,8 +237,11 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             'foo' => array(
                 'foo' => 'foo'
             ),
+            'bar' => array(
+                'foo' => 'bar'
+            ),
         );
-        $object = new WithOtherNamespace(new InOtherNamespace('foo'));
+        $object = new WithOtherNamespace(new InOtherNamespace('foo'), new InOtherNamespace('bar'));
         $this->assertEquals(
             $object,
             $this->buildSerializer()->deserialize(
