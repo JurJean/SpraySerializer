@@ -225,7 +225,7 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
         $matches = array();
 
         preg_match_all(
-            '/^use (.*) as (.*)\;$/im',
+            '/^use ([a-zA-Z0-9\\\\]*) as ([a-zA-Z0-9]*)\;$/im',
             file_get_contents($reflection->getFileName()),
             $matches
         );
@@ -246,7 +246,7 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
         $matches = array();
 
         preg_match_all(
-            '/^use (.*)\;$/im',
+            '/^use ([a-zA-Z0-9\\\\]*)\;$/im',
             file_get_contents($reflection->getFileName()),
             $matches
         );
