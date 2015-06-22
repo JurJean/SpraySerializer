@@ -42,8 +42,9 @@ class Serializer implements SerializerInterface
         }
         if ( ! class_exists($class)) {
             throw new InvalidArgumentException(sprintf(
-                '$subject is not an existing class, %s given',
-                 is_object($subject) ? get_class($subject) : gettype($subject)
+                '% is not an existing class, %s given',
+                $subject,
+                is_object($subject) ? get_class($subject) : gettype($subject)
             ));
         }
         $object = $this->construct($class, $data);
