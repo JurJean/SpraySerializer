@@ -38,9 +38,14 @@ class Scalar
      * @var bool
      */
     private $bool;
-    
+
     /**
      * @var array
      */
     private $array;
+
+    /**
+     * @var unknown
+     */
+    private $unknown;
 }

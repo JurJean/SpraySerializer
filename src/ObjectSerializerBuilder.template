@@ -19,6 +19,7 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
         return function($subject, array &$data, SerializerInterface $serializer) {
 <?php foreach ($properties as $property): ?>
 <?php switch (true): ?>
+<?php default: ?>
 <?php case ( ! $this->hasTargetAnnotation($property)): ?>
             $data['<?php echo $property->getName() ?>'] = $subject-><?php echo $property->getName() ?>;
 <?php break; ?>
@@ -59,6 +60,7 @@ class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObject
         return function($subject, array &$data, SerializerInterface $serializer) {
 <?php foreach ($properties as $property): ?>
 <?php switch (true): ?>
+<?php default: ?>
 <?php case ( ! $this->hasTargetAnnotation($property)): ?>
             $subject-><?php echo $property->getName() ?> = $data['<?php echo $property->getName() ?>'];
 <?php break; ?>
