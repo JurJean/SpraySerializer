@@ -23,6 +23,7 @@ class ScalarSerializer extends AbstractObjectSerializer
             $data['boolean'] = (bool) $subject->boolean;
             $data['bool'] = (bool) $subject->bool;
             $data['array'] = (array) $subject->array;
+            $data['unknown'] = $subject->unknown;
         };
     }
     
@@ -37,6 +38,7 @@ class ScalarSerializer extends AbstractObjectSerializer
             $subject->boolean = (bool) $data['boolean'];
             $subject->bool = (bool) $data['bool'];
             $subject->array = isset($data['array']) ? (array) $data['array'] : array();
+            $subject->unknown = $data['unknown'];
         };
     }
 }
