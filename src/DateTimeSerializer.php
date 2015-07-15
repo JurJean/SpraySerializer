@@ -3,23 +3,34 @@
 namespace Spray\Serializer;
 
 use DateTime;
+use DateTimeImmutable;
 
-class DateTimeSerializer extends AbstractObjectSerializer
+class DateTimeSerializer implements SerializerInterface
 {
     /**
      * @var string
      */
     private $format;
-    
+
     /**
      * @param string $format
      */
     public function __construct($format = 'Y-m-d H:i:s')
     {
-        parent::__construct('DateTime');
         $this->format = $format;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function accepts($subject)
+    {
+        if (is_object($subject)) {
+            $subject = get_class($subject);
+        }
+        return $subject === 'DateTime';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -27,19 +38,21 @@ class DateTimeSerializer extends AbstractObjectSerializer
     {
         return DateTime::createFromFormat($this->format, $data);
     }
-    
-    protected function bindSerializer()
+
+    /**
+     * {@inheritdoc}
+     */
+    public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
-        $format = $this->format;
-        return function($subject, &$data, SerializerInterface $serializer) use ($format) {
-            $data = $subject->format($format);
-        };
+        $data = $subject->format($this->format);
+        return $data;
     }
 
-    protected function bindDeserializer()
+    /**
+     * {@inheritdoc}
+     */
+    public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
-        return function($subject, &$data = array(), SerializerInterface $serializer = null) {
-            return $subject;
-        };
+        return $subject;
     }
 }
