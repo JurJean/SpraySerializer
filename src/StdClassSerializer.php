@@ -41,6 +41,7 @@ class StdClassSerializer implements SerializerInterface
      */
     public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
+        unset($data['__type']);
         foreach ($data as $property => $value) {
             @$subject->$property = $value;
         }
