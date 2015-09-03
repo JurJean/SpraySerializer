@@ -54,7 +54,7 @@ class SerializerTest extends ObjectSerializerTestCase
             new WithOtherNamespace(new InOtherNamespace('foo'), new InOtherNamespace('bar')),
         ];
 
-        if (version_compare(phpversion(), '5.5.0', '<')) {
+        if (class_exists('DateTimeImmutable')) {
             $objects[] = new HasDateTimeImmutable(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2011-01-01 12:00:00'));
         }
 
