@@ -40,7 +40,7 @@ abstract class ObjectSerializerTestCase extends PHPUnit_Framework_TestCase
         $serializer = $this->createSerializer();
         foreach ($this->createObjectsToSerialize() as $object) {
             $serialized = $serializer->serialize($object);
-            $this->assertEquals($object, $serializer->deserialize(get_class($object), $serialized));
+            $this->assertEquals($object, $serializer->deserialize(null, $serialized));
         }
     }
 }

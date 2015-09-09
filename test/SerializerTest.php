@@ -52,6 +52,8 @@ class SerializerTest extends ObjectSerializerTestCase
             ),
             new BarCollection(array()),
             new WithOtherNamespace(new InOtherNamespace('foo'), new InOtherNamespace('bar')),
+
+            array(new Subject('foo', 'bar', 'baz'))
         ];
 
         if (class_exists('DateTimeImmutable')) {

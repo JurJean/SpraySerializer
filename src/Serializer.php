@@ -35,9 +35,16 @@ class Serializer implements SerializerInterface
         } else if (is_string($subject)) {
             $class = $subject;
         } else {
+            if (is_array($data) && ! isset($data['__type'])) {
+                $result = array();
+                foreach ($data as $item) {
+                    $result[] = $this->deserialize(null, $item);
+                }
+                return $result;
+            }
             throw new InvalidArgumentException(sprintf(
                 'Could not determine class to deserialize to, %s given',
-                 is_object($subject) ? get_class($subject) : gettype($subject)
+                is_object($subject) ? get_class($subject) : gettype($subject)
             ));
         }
         if ( ! class_exists($class)) {
@@ -56,6 +63,13 @@ class Serializer implements SerializerInterface
 
     public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
+        if (is_array($subject)) {
+            $result = array();
+            foreach ($subject as $item) {
+                $result[] = $this->serialize($item);
+            }
+            return $result;
+        }
         if ( ! is_object($subject)) {
             throw new \InvalidArgumentException(sprintf(
                 '$subject is not an object, %s given',
