@@ -6,11 +6,14 @@ use PHPUnit_Framework_TestCase;
 use Spray\Serializer\Cache\ArrayCache;
 use Spray\Serializer\DateTimeImmutableSerializer;
 use Spray\Serializer\DateTimeSerializer;
+use Spray\Serializer\ObjectListener;
 use Spray\Serializer\ObjectSerializerBuilder;
+use Spray\Serializer\ObjectTypeListener;
 use Spray\Serializer\ReflectionRegistry;
 use Spray\Serializer\Serializer;
 use Spray\Serializer\SerializerLocator;
 use Spray\Serializer\SerializerRegistry;
+use Zend\EventManager\EventManager;
 
 abstract class ObjectSerializerTestCase extends PHPUnit_Framework_TestCase
 {
@@ -29,10 +32,16 @@ abstract class ObjectSerializerTestCase extends PHPUnit_Framework_TestCase
         $registry = new SerializerRegistry();
         $registry->add(new DateTimeSerializer());
         $registry->add(new DateTimeImmutableSerializer());
-        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
-        $cache = new ArrayCache();
-        $locator = new SerializerLocator($registry, $builder, $cache);
-        return new Serializer($locator);
+
+        $serializer = new Serializer(new EventManager());
+        $serializer->attach(new ObjectTypeListener());
+        $serializer->attach(new ObjectListener(new SerializerLocator(
+            $registry,
+            new ObjectSerializerBuilder(new ReflectionRegistry()),
+            new ArrayCache()
+        )));
+
+        return $serializer;
     }
 
     public function testObjectIsEqualAfterSerializeAndDeserialize()

@@ -4,7 +4,7 @@ namespace Spray\Serializer;
 
 use Closure;
 
-abstract class BoundClosureSerializer implements SerializerInterface
+abstract class BoundClosureSerializer implements SerializerInterface, ConstructorInterface
 {
     /**
      * @var string

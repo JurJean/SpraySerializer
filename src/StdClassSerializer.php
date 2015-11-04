@@ -4,7 +4,7 @@ namespace Spray\Serializer;
 
 use stdClass;
 
-class StdClassSerializer implements SerializerInterface
+class StdClassSerializer implements SerializerInterface, ConstructorInterface
 {
     /**
      * {@inheritdoc}

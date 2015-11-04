@@ -4,10 +4,10 @@
 namespace <?php echo $reflection->getNamespaceName(); ?>;
 <?php endif; ?>
 
-use Spray\Serializer\AbstractObjectSerializer;
+use Spray\Serializer\BoundClosureSerializer;
 use Spray\Serializer\SerializerInterface;
 
-class <?php echo $reflection->getShortName() ?>Serializer extends AbstractObjectSerializer
+class <?php echo $reflection->getShortName() ?>Serializer extends BoundClosureSerializer
 {
     public function __construct()
     {
