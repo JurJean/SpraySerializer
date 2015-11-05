@@ -2,10 +2,10 @@
 
 namespace Spray\Serializer\TestAssets;
 
-use Spray\Serializer\AbstractObjectSerializer;
+use Spray\Serializer\BoundClosureSerializer;
 use Spray\Serializer\SerializerInterface;
 
-class BarSerializer extends AbstractObjectSerializer
+class BarSerializer extends BoundClosureSerializer
 {
     public function __construct()
     {

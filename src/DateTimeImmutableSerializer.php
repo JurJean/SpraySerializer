@@ -4,7 +4,7 @@ namespace Spray\Serializer;
 
 use DateTimeImmutable;
 
-class DateTimeImmutableSerializer implements SerializerInterface
+class DateTimeImmutableSerializer implements SerializerInterface, ConstructorInterface
 {
     /**
      * @var string
