@@ -15,7 +15,7 @@ class BarSerializer extends BoundClosureSerializer
     protected function bindSerializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
-            $subject->foobar = isset($data['foobar']) ? (string) $data['foobar'] : null;
+            $data['foobar'] = (string) $subject->foobar;
         };
     }
     
