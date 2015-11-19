@@ -79,19 +79,19 @@ class <?php echo $reflection->getShortName() ?>Serializer extends BoundClosureSe
             $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? (array) $data['<?php echo $property->getName() ?>'] : array();
 <?php break; ?>
 <?php case ($this->isTargetString($property)): ?>
-            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? (string) $data['<?php echo $property->getName() ?>'] : null ?>;
+            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? (string) $data['<?php echo $property->getName() ?>'] : null;
 <?php break; ?>
 <?php case ($this->isTargetInteger($property)): ?>
-            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (int) $data['<?php echo $property->getName() ?>'] : null ?>;
+            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (int) $data['<?php echo $property->getName() ?>'] : null;
 <?php break; ?>
 <?php case ($this->isTargetDouble($property)): ?>
-            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (double) $data['<?php echo $property->getName() ?>'] : null ?>;
+            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (double) $data['<?php echo $property->getName() ?>'] : null;
 <?php break; ?>
 <?php case ($this->isTargetFloat($property)): ?>
-            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (float) $data['<?php echo $property->getName() ?>'] : null ?>;
+            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (float) $data['<?php echo $property->getName() ?>'] : null;
 <?php break; ?>
 <?php case ($this->isTargetBoolean($property)): ?>
-            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (bool) $data['<?php echo $property->getName() ?>'] : null ?>;
+            $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>'] ? (bool) $data['<?php echo $property->getName() ?>'] : null;
 <?php break; ?>
 <?php endswitch; ?>
 <?php endforeach ?>
