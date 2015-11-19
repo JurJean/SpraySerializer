@@ -15,8 +15,8 @@ class ObjectTypeListener implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(SerializeEvent::CONSTRUCT, array($this, 'inject'));
-        $this->listeners[] = $events->attach(SerializeEvent::DESTRUCT, array($this, 'detect'));
+        $this->listeners[] = $events->attach(SerializeEvent::CONSTRUCT, array($this, 'inject'), 1000);
+        $this->listeners[] = $events->attach(SerializeEvent::DESTRUCT, array($this, 'detect'), 1000);
     }
 
     /**

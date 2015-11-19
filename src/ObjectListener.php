@@ -60,6 +60,13 @@ class ObjectListener implements ListenerAggregateInterface
         $data = &$event->getData();
         $serializer = $event->getSerializer();
 
+        if ( ! is_object($subject)) {
+            throw new InvalidArgumentException(sprintf(
+                '$subject was not constructed, %s given',
+                is_string($subject) ? $subject : gettype($subject)
+            ));
+        }
+
         foreach ($this->ancestry(get_class($subject)) as $parent) {
             $this->serializers->locate($parent)->deserialize($subject, $data, $serializer);
         }
