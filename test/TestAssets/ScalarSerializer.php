@@ -30,13 +30,13 @@ class ScalarSerializer extends BoundClosureSerializer
     protected function bindDeserializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
-            $subject->string = (string) $data['string'];
-            $subject->int = (int) $data['int'];
-            $subject->integer = (int) $data['integer'];
-            $subject->double = (double) $data['double'];
-            $subject->float = (float) $data['float'];
-            $subject->boolean = (bool) $data['boolean'];
-            $subject->bool = (bool) $data['bool'];
+            $data['string'] = isset($data['string']) ? (string) $data['string'] : null;
+            $data['int'] = isset($data['int']) ? (int) $data['int'] : null;
+            $data['integer'] = isset($data['integer']) ? (int) $data['integer'] : null;
+            $data['double'] = isset($data['double']) ? (double) $data['double'] : null;
+            $data['float'] = isset($data['float']) ? (float) $data['float'] : null;
+            $data['boolean'] = isset($data['boolean']) ? (bool) $data['boolean'] : null;
+            $data['bool'] = isset($data['bool']) ? (bool) $data['bool'] : null;
             $subject->array = isset($data['array']) ? (array) $data['array'] : array();
             $subject->unknown = $data['unknown'];
         };
