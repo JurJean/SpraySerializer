@@ -3,6 +3,7 @@
 namespace Spray\Serializer;
 
 use InvalidArgumentException;
+use RuntimeException;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
@@ -59,6 +60,13 @@ class ObjectListener implements ListenerAggregateInterface
         $subject = $event->getSubject();
         $data = &$event->getData();
         $serializer = $event->getSerializer();
+
+        if ( ! is_object($subject)) {
+            throw new RuntimeException(sprintf(
+                '%s is not constructed into an object',
+                $subject
+            ));
+        }
 
         foreach ($this->ancestry(get_class($subject)) as $parent) {
             $this->serializers->locate($parent)->deserialize($subject, $data, $serializer);
