@@ -6,131 +6,99 @@ use RuntimeException;
 use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\PropertyReflection;
 
-class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
+class AnnotationBackedPropertyInfo implements PropertyInfoInterface
 {
-    /**
-     * @var ReflectionRegistryInterface
-     */
-    private $reflections;
-    
-    public function __construct(ReflectionRegistryInterface $reflections)
+    public function findPropertiesDefinedInClass(ClassReflection $class)
     {
-        $this->reflections = $reflections;
-    }
-    
-    public function build($subject)
-    {
-        $reflection = $this->reflections->getReflection($subject);
-        $properties = $this->properties($subject);
-        
-        ob_start();
-        include sprintf(
-            '%s/ObjectSerializerBuilder.template',
-            __DIR__
-        );
-        return ob_get_clean();
-    }
-    
-    protected function properties($subject)
-    {
-        $result = array();
-        foreach ($this->findPropertiesDefinedInClass($subject) as $property) {
-            $result[] = $this->reflections->getReflection($subject)->getProperty($property);
-        }
-        return $result;
-    }
-    
-    protected function findPropertiesDefinedInClass($subject)
-    {
-        $parent = get_parent_class($subject);
+        $parent = $class->getParentClass();
         if (false === $parent) {
-            return $this->findProperties($subject);
+            return $this->findProperties($class);
         }
         return array_diff(
-            $this->findProperties($subject),
+            $this->findProperties($class),
             $this->findProperties($parent)
         );
     }
-    
-    protected function findProperties($subject)
+
+    protected function findProperties(ClassReflection $class)
     {
         $result = array();
-        foreach ($this->reflections->getReflection($subject)->getProperties() as $property) {
-            $result[] = $property->getName();
+        foreach ($class->getProperties() as $property) {
+            $result[] = $property;
         }
         return $result;
     }
-    
-    protected function hasTargetAnnotation(PropertyReflection $property)
+
+    public function hasPropertyAnnotation(PropertyReflection $property, $annotationName)
     {
         if ( ! $property->getDocBlock()) {
             return false;
         }
-        if ( ! $property->getDocBlock()->hasTag('var')) {
+        if ( ! $property->getDocBlock()->hasTag($annotationName)) {
             return false;
         }
         return true;
     }
-    
-    protected function isTargetScalar(PropertyReflection $property)
+
+    public function isTargetScalar(PropertyReflection $property)
     {
         return $this->isTargetString($property)
             || $this->isTargetInteger($property)
             || $this->isTargetDouble($property)
             || $this->isTargetFloat($property);
     }
-    
-    protected function isTargetString(PropertyReflection $property)
+
+    public function isTargetString(PropertyReflection $property)
     {
         return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'string',
         ));
     }
-    
-    protected function isTargetInteger(PropertyReflection $property)
+
+    public function isTargetInteger(PropertyReflection $property)
     {
         return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'int',
             'integer'
         ));
     }
-    
-    protected function isTargetDouble(PropertyReflection $property)
+
+    public function isTargetDouble(PropertyReflection $property)
     {
         return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'double',
         ));
     }
-    
-    protected function isTargetFloat(PropertyReflection $property)
+
+    public function isTargetFloat(PropertyReflection $property)
     {
         return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'float',
         ));
     }
-    
-    protected function isTargetBoolean(PropertyReflection $property)
+
+    public function isTargetBoolean(PropertyReflection $property)
     {
         return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
             'boolean',
             'bool'
         ));
     }
-    
-    protected function isTargetArray(PropertyReflection $property)
+
+    public function isTargetArray(PropertyReflection $property)
     {
         return 'array' === substr($property->getDocBlock()->getTag('var')->getContent(), 0, 5);
     }
-    
-    protected function isTargetArrayWithObjects(PropertyReflection $property)
+
+    public function isTargetArrayWithObjects(PropertyReflection $property)
     {
         return 0 !== preg_match(
             '|^array<(.*)>|',
             $property->getDocBlock()->getTag('var')->getContent()
         );
     }
-    
-    protected function determineTargetArrayClass(PropertyReflection $property)
+
+    public function findTargetArrayClass(PropertyReflection $property)
     {
         $matches = array();
         preg_match(
@@ -138,18 +106,18 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             $property->getDocBlock()->getTag('var')->getContent(),
             $matches
         );
-        
+
         if (($class = $this->findClass($property->getDeclaringClass(), $matches[1]))) {
             return $class;
         }
-        
+
         throw new RuntimeException(sprintf(
             'Cannot find target for array<%s>',
             $matches[1]
         ));
     }
-    
-    protected function isTargetObject(PropertyReflection $property)
+
+    public function isTargetObject(PropertyReflection $property)
     {
         if (($class = $this->findClass(
             $property->getDeclaringClass(),
@@ -158,21 +126,23 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
         }
         return false;
     }
-    
-    public function getTargetClass($property)
+
+    public function findTargetClass(PropertyReflection $property)
     {
         if ( ! $this->isTargetObject($property)) {
             throw new RuntimeException(sprintf(
-                'Target value of property %s is not an object',
-                $property
+                'Target value of property %s::%s is not an object',
+                $property->getDeclaringClass()->getName(),
+                $property->getName()
             ));
         }
+
         return $this->findClass(
             $property->getDeclaringClass(),
             $property->getDocBlock()->getTag('var')->getContent()
         );
     }
-    
+
     protected function findClass(ClassReflection $reflection, $class)
     {
         if (($className = $this->findClassInCurrentNamespace($reflection, $class))) {
@@ -185,7 +155,7 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             return $className;
         }
     }
-    
+
     protected function findClassInCurrentNamespace(ClassReflection $reflection, $class)
     {
         $fqn = sprintf(
@@ -197,7 +167,7 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
             return $fqn;
         }
     }
-    
+
     protected function findClassInImports(ClassReflection $reflection, $class)
     {
         foreach ($this->findAliasedImports($reflection) as $alias => $aliasedImport) {
@@ -207,12 +177,13 @@ class ObjectSerializerBuilder implements ObjectSerializerBuilderInterface
         }
 
         foreach ($this->findImports($reflection) as $import) {
-            if ($this->reflections->getReflection($import)->getShortName() === $class) {
+            $importReflection = new ClassReflection($import);
+            if ($importReflection->getShortName() === $class) {
                 return $import;
             }
         }
     }
-    
+
     protected function findClassInRoot($class)
     {
         if (class_exists($class) || interface_exists($class)) {

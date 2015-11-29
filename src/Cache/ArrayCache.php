@@ -6,8 +6,24 @@ use RuntimeException;
 
 class ArrayCache implements CacheInterface
 {
+    /**
+     * @var
+     */
+    private $suffix;
+
+    /**
+     * @var array
+     */
     private $cached = array();
-    
+
+    /**
+     * @param $suffix
+     */
+    public function __construct($suffix)
+    {
+        $this->suffix = $suffix;
+    }
+
     public function exists($subject)
     {
         if (is_object($subject)) {
@@ -23,11 +39,12 @@ class ArrayCache implements CacheInterface
         }
         if ( ! $this->exists($subject)) {
             throw new RuntimeException(sprintf(
-                'Subject %s has no cached serializer',
-                $subject
+                'Subject %s has no cached %s',
+                $subject,
+                $this->suffix
             ));
         }
-        $className = $subject . 'Serializer';
+        $className = $subject . $this->suffix;
         if ( ! class_exists($className)) {
             eval('?>' . $this->cached[$subject]);
         }

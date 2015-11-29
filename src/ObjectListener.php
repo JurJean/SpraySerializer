@@ -4,6 +4,8 @@ namespace Spray\Serializer;
 
 use InvalidArgumentException;
 use RuntimeException;
+use Spray\Serializer\Object\ConstructorInterface;
+use Spray\Serializer\Object\SerializerLocatorInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;

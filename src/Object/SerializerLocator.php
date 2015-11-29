@@ -1,8 +1,11 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
 use Spray\Serializer\Cache\CacheInterface;
+use Spray\Serializer\Object\ObjectSerializerGeneratorInterface;
+use Spray\Serializer\Object\SerializerLocatorInterface;
+use Spray\Serializer\Object\SerializerRegistryInterface;
 
 class SerializerLocator implements SerializerLocatorInterface
 {
@@ -12,9 +15,9 @@ class SerializerLocator implements SerializerLocatorInterface
     private $registry;
     
     /**
-     * @var ObjectSerializerBuilderInterface 
+     * @var ObjectSerializerGeneratorInterface
      */
-    private $builder;
+    private $generator;
     
     /**
      * @var CacheInterface
@@ -28,11 +31,11 @@ class SerializerLocator implements SerializerLocatorInterface
     
     public function __construct(
         SerializerRegistryInterface $registry,
-        ObjectSerializerBuilderInterface $builder,
+        ObjectSerializerGeneratorInterface $generator,
         CacheInterface $cache)
     {
         $this->registry = $registry;
-        $this->builder = $builder;
+        $this->generator = $generator;
         $this->cache = $cache;
     }
     
@@ -41,7 +44,7 @@ class SerializerLocator implements SerializerLocatorInterface
         if ( ! isset($this->located[$subject])) {
             if ( ! $this->registry->contains($subject)) {
                 if ( ! $this->cache->exists($subject)) {
-                    $this->cache->save($subject, $this->builder->build($subject));
+                    $this->cache->save($subject, $this->generator->generate($subject));
                 }
                 $this->registry->add($this->cache->load($subject));
             }

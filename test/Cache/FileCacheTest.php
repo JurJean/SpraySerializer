@@ -30,7 +30,7 @@ class FileCacheTest extends PHPUnit_Framework_TestCase
     
     protected function createCache()
     {
-        return new FileCache($this->filesystem, '/tmp');
+        return new FileCache($this->filesystem, '/tmp', 'Serializer');
     }
     
     public function testDoesNotExist()

@@ -1,8 +1,9 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
 use PHPUnit_Framework_TestCase;
+use Spray\Serializer\Object\StdClassSerializer;
 use stdClass;
 
 class StdClassSerializerTest extends PHPUnit_Framework_TestCase

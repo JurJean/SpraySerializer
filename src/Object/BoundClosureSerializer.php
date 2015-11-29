@@ -1,8 +1,10 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
 use Closure;
+use Spray\Serializer\Object\ConstructorInterface;
+use Spray\Serializer\SerializerInterface;
 
 abstract class BoundClosureSerializer implements SerializerInterface, ConstructorInterface
 {

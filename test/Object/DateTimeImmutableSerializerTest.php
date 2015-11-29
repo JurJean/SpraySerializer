@@ -1,9 +1,10 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
 use DateTimeImmutable;
 use PHPUnit_Framework_TestCase;
+use Spray\Serializer\Object\DateTimeImmutableSerializer;
 
 class DateTimeImmutableSerializerTest extends PHPUnit_Framework_TestCase
 {

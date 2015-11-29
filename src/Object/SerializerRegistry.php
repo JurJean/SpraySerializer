@@ -1,8 +1,10 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
 use RuntimeException;
+use Spray\Serializer\SerializerInterface;
+use Spray\Serializer\Object\SerializerRegistryInterface;
 
 class SerializerRegistry implements SerializerRegistryInterface
 {
