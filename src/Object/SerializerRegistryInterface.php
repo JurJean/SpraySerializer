@@ -1,6 +1,8 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
+
+use Spray\Serializer\SerializerInterface;
 
 interface SerializerRegistryInterface
 {

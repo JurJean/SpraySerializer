@@ -1,6 +1,6 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
 interface ConstructorInterface
 {

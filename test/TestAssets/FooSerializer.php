@@ -2,7 +2,7 @@
 
 namespace Spray\Serializer\TestAssets;
 
-use Spray\Serializer\BoundClosureSerializer;
+use Spray\Serializer\Object\BoundClosureSerializer;
 use Spray\Serializer\SerializerInterface;
 
 class FooSerializer extends BoundClosureSerializer

@@ -1,25 +1,13 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
-use DateTime;
-use DateTimeImmutable;
+use Spray\Serializer\Object\ConstructorInterface;
+use Spray\Serializer\SerializerInterface;
+use stdClass;
 
-class DateTimeSerializer implements SerializerInterface, ConstructorInterface
+class StdClassSerializer implements SerializerInterface, ConstructorInterface
 {
-    /**
-     * @var string
-     */
-    private $format;
-
-    /**
-     * @param string $format
-     */
-    public function __construct($format = 'Y-m-d H:i:s')
-    {
-        $this->format = $format;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -28,7 +16,7 @@ class DateTimeSerializer implements SerializerInterface, ConstructorInterface
         if (is_object($subject)) {
             $subject = get_class($subject);
         }
-        return $subject === 'DateTime';
+        return $subject === 'stdClass';
     }
 
     /**
@@ -36,7 +24,7 @@ class DateTimeSerializer implements SerializerInterface, ConstructorInterface
      */
     public function construct($subject, &$data = array())
     {
-        return DateTime::createFromFormat($this->format, $data);
+        return new stdClass;
     }
 
     /**
@@ -44,7 +32,9 @@ class DateTimeSerializer implements SerializerInterface, ConstructorInterface
      */
     public function serialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
-        $data = $subject->format($this->format);
+        foreach ($subject as $property => $value) {
+            $data[$property] = $value;
+        }
         return $data;
     }
 
@@ -53,6 +43,10 @@ class DateTimeSerializer implements SerializerInterface, ConstructorInterface
      */
     public function deserialize($subject, &$data = array(), SerializerInterface $serializer = null)
     {
+        unset($data['__type']);
+        foreach ($data as $property => $value) {
+            @$subject->$property = $value;
+        }
         return $subject;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Spray\Serializer\Cache;
 
+use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class FileCache implements CacheInterface
@@ -10,13 +11,27 @@ class FileCache implements CacheInterface
      * @var Filesystem
      */
     private $filesystem;
-    
+
+    /**
+     * @var string
+     */
     private $path;
-    
-    public function __construct(Filesystem $filesystem, $path)
+
+    /**
+     * @var string
+     */
+    private $suffix;
+
+    /**
+     * @param Filesystem $filesystem
+     * @param string $path
+     * @param string $suffix
+     */
+    public function __construct(Filesystem $filesystem, $path, $suffix)
     {
         $this->filesystem = $filesystem;
         $this->path = $path;
+        $this->suffix = $suffix;
     }
     
     public function exists($subject)
@@ -28,7 +43,8 @@ class FileCache implements CacheInterface
     {
         if ( ! $this->exists($subject)) {
             throw new RuntimeException(
-                'Cannot load serializer from filesystem, %s does not exist',
+                'Cannot load %s from filesystem, %s does not exist',
+                $this->suffix,
                 $this->normalizePath($subject)
             );
         }
@@ -47,7 +63,7 @@ class FileCache implements CacheInterface
         if (is_object($subject)) {
             $subject = get_class($subject);
         }
-        return $subject . 'Serializer';
+        return $subject . $this->suffix;
     }
     
     protected function normalizePath($subject)

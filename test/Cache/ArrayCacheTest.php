@@ -13,20 +13,20 @@ class ArrayCacheTest extends PHPUnit_Framework_TestCase
     
     public function testNotCached()
     {
-        $cache = new ArrayCache();
+        $cache = new ArrayCache('Serializer');
         $this->assertFalse($cache->exists('foo'));
     }
     
     public function testCacheIsCached()
     {
-        $cache = new ArrayCache();
+        $cache = new ArrayCache('Serializer');
         $cache->save('foo', 'asdasdasda<sd');
         $this->assertTrue($cache->exists('foo'));
     }
     
     public function testLoadInstanceOfCached()
     {
-        $cache = new ArrayCache();
+        $cache = new ArrayCache('Serializer');
         $cache->save('Foo\Foo', '<?php namespace Foo; class FooSerializer {}');
         $this->assertInstanceOf(
             'Foo\FooSerializer',

@@ -3,16 +3,17 @@
 namespace Spray\Serializer\Testing;
 
 use PHPUnit_Framework_TestCase;
+use Spray\Serializer\AnnotationBackedPropertyInfo;
 use Spray\Serializer\Cache\ArrayCache;
-use Spray\Serializer\DateTimeImmutableSerializer;
-use Spray\Serializer\DateTimeSerializer;
+use Spray\Serializer\Object\DateTimeImmutableSerializer;
+use Spray\Serializer\Object\DateTimeSerializer;
 use Spray\Serializer\ObjectListener;
-use Spray\Serializer\ObjectSerializerBuilder;
+use Spray\Serializer\Object\ObjectSerializerGenerator;
 use Spray\Serializer\ObjectTypeListener;
 use Spray\Serializer\ReflectionRegistry;
 use Spray\Serializer\Serializer;
-use Spray\Serializer\SerializerLocator;
-use Spray\Serializer\SerializerRegistry;
+use Spray\Serializer\Object\SerializerLocator;
+use Spray\Serializer\Object\SerializerRegistry;
 use Zend\EventManager\EventManager;
 
 abstract class ObjectSerializerTestCase extends PHPUnit_Framework_TestCase
@@ -37,8 +38,8 @@ abstract class ObjectSerializerTestCase extends PHPUnit_Framework_TestCase
         $serializer->attach(new ObjectTypeListener());
         $serializer->attach(new ObjectListener(new SerializerLocator(
             $registry,
-            new ObjectSerializerBuilder(new ReflectionRegistry()),
-            new ArrayCache()
+            new ObjectSerializerGenerator(new AnnotationBackedPropertyInfo()),
+            new ArrayCache('Serializer')
         )));
 
         return $serializer;

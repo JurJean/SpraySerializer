@@ -5,6 +5,10 @@ namespace Spray\Serializer;
 use DateTime;
 use PHPUnit_Framework_TestCase;
 use Spray\Serializer\Cache\ArrayCache;
+use Spray\Serializer\Object\DateTimeSerializer;
+use Spray\Serializer\Object\ObjectSerializerGenerator;
+use Spray\Serializer\Object\SerializerLocator;
+use Spray\Serializer\Object\SerializerRegistry;
 use Spray\Serializer\TestAssets\InheritedSubject;
 use Spray\Serializer\TestAssets\Subject;
 
@@ -14,7 +18,7 @@ class SpeedTest extends PHPUnit_Framework_TestCase
     {
         $registry = new SerializerRegistry();
         $registry->add(new DateTimeSerializer());
-        $builder = new ObjectSerializerBuilder(new ReflectionRegistry());
+        $builder = new ObjectSerializerGenerator(new ReflectionRegistry());
         $cache = new ArrayCache();
         $locator = new SerializerLocator($registry, $builder, $cache);
         return new Serializer($locator);

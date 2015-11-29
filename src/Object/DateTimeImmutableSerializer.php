@@ -1,8 +1,9 @@
 <?php
 
-namespace Spray\Serializer;
+namespace Spray\Serializer\Object;
 
 use DateTimeImmutable;
+use Spray\Serializer\SerializerInterface;
 
 class DateTimeImmutableSerializer implements SerializerInterface, ConstructorInterface
 {
