@@ -13,11 +13,23 @@ class PrivateStuff
      * @private
      * @var string
      */
-    private $secretString = 'Foo';
+    private $secretString;
 
     /**
      * @private
      * @var array
      */
-    private $secretArray = ['Foo'];
+    private $secretArray;
+
+    /**
+     * @param string $noSecret
+     * @param string $secretString
+     * @param array $secretArray
+     */
+    public function __construct($noSecret = 'Foo', $secretString = 'Foo', $secretArray = ['Foo'])
+    {
+        $this->noSecret = (string) $noSecret;
+        $this->secretString = (string) $secretString;
+        $this->secretArray = (array) $secretArray;
+    }
 }

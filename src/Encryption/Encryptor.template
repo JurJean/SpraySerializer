@@ -18,10 +18,10 @@ class <?php echo $reflection->getShortName() ?>Encryptor implements EncryptorInt
 <?php case ( ! $this->propertyInfo->hasPropertyAnnotation($property, 'private')): ?>
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetScalar($property)): ?>
-        $data['<?php echo $property->getName() ?>'] = $blockCipher->encrypt($data['<?php echo $property->getName() ?>']);
+        $data['<?php echo $property->getName() ?>'] = !empty($data['<?php echo $property->getName() ?>']) ? $blockCipher->encrypt($data['<?php echo $property->getName() ?>']) : null;
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetArray($property)): ?>
-        $data['<?php echo $property->getName() ?>'] = $blockCipher->encrypt(json_encode($data['<?php echo $property->getName() ?>']));
+        $data['<?php echo $property->getName() ?>'] = !empty($data['<?php echo $property->getName() ?>'][0]) ? $blockCipher->encrypt(json_encode($data['<?php echo $property->getName() ?>'])) : null;
 <?php break; ?>
 <?php endswitch; ?>
 <?php endforeach ?>
@@ -35,10 +35,10 @@ class <?php echo $reflection->getShortName() ?>Encryptor implements EncryptorInt
 <?php case ( ! $this->propertyInfo->hasPropertyAnnotation($property, 'private')): ?>
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetScalar($property)): ?>
-        $data['<?php echo $property->getName() ?>'] = $blockCipher->decrypt($data['<?php echo $property->getName() ?>']);
+        $data['<?php echo $property->getName() ?>'] = !empty($data['<?php echo $property->getName() ?>']) ? $blockCipher->decrypt($data['<?php echo $property->getName() ?>']) : null;
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetArray($property)): ?>
-        $data['<?php echo $property->getName() ?>'] = json_decode($blockCipher->decrypt($data['<?php echo $property->getName() ?>']), true);
+        $data['<?php echo $property->getName() ?>'] = !empty($data['<?php echo $property->getName() ?>']) ? json_decode($blockCipher->decrypt($data['<?php echo $property->getName() ?>']), true) : null;
 <?php break; ?>
 <?php endswitch; ?>
 <?php endforeach ?>

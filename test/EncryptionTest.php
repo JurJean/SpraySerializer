@@ -90,4 +90,36 @@ class EncryptionTest extends PHPUnit_Framework_TestCase
             $this->createSerializer()->deserialize(PrivateStuff::class, $data)
         );
     }
+
+    public function testEncryptEmpty()
+    {
+        $this->blockCipher->expects($this->never())
+            ->method('encrypt');
+
+        $this->assertEquals(
+            array(
+                'noSecret' => 'Foo',
+                'secretString' => '',
+                'secretArray' => ''
+            ),
+            $this->createSerializer()->serialize(new PrivateStuff('Foo', '', ''))
+        );
+    }
+
+    public function testDecryptEmpty()
+    {
+        $this->blockCipher->expects($this->never())
+            ->method('decrypt');
+
+        $data = array(
+            'noSecret' => 'Foo',
+            'secretString' => '',
+            'secretArray' => ''
+        );
+
+        $this->assertEquals(
+            new PrivateStuff('Foo', null, null),
+            $this->createSerializer()->deserialize(PrivateStuff::class, $data)
+        );
+    }
 }
