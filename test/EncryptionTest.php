@@ -65,7 +65,7 @@ class EncryptionTest extends PHPUnit_Framework_TestCase
                 'secretString' => 'Encrypted 1',
                 'secretArray' => 'Encrypted 2'
             ),
-            $this->createSerializer()->serialize(new PrivateStuff())
+            $this->createSerializer()->serialize(new PrivateStuff('Foo', 'Foo', ['Foo']))
         );
     }
 
@@ -86,7 +86,39 @@ class EncryptionTest extends PHPUnit_Framework_TestCase
             'secretArray' => 'Encrypted 2'
         );
         $this->assertEquals(
-            new PrivateStuff(),
+            new PrivateStuff('Foo', 'Foo', ['Foo']),
+            $this->createSerializer()->deserialize(PrivateStuff::class, $data)
+        );
+    }
+
+    public function testEncryptEmpty()
+    {
+        $this->blockCipher->expects($this->never())
+            ->method('encrypt');
+
+        $this->assertEquals(
+            array(
+                'noSecret' => 'Foo',
+                'secretString' => null,
+                'secretArray' => null
+            ),
+            $this->createSerializer()->serialize(new PrivateStuff('Foo', '', []))
+        );
+    }
+
+    public function testDecryptEmpty()
+    {
+        $this->blockCipher->expects($this->never())
+            ->method('decrypt');
+
+        $data = array(
+            'noSecret' => 'Foo',
+            'secretString' => null,
+            'secretArray' => null
+        );
+
+        $this->assertEquals(
+            new PrivateStuff('Foo', null, []),
             $this->createSerializer()->deserialize(PrivateStuff::class, $data)
         );
     }
