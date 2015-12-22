@@ -26,10 +26,10 @@ class PrivateStuff
      * @param string $secretString
      * @param array $secretArray
      */
-    public function __construct($noSecret = 'Foo', $secretString = 'Foo', $secretArray = ['Foo'])
+    public function __construct($noSecret = 'Foo', $secretString = 'Foo', array $secretArray = null)
     {
         $this->noSecret = (string) $noSecret;
-        $this->secretString = (string) $secretString;
-        $this->secretArray = (array) $secretArray;
+        $this->secretString = $secretString;
+        $this->secretArray = $secretArray;
     }
 }

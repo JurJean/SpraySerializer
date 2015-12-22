@@ -10,7 +10,7 @@ class PrivateStuffEncryptor implements EncryptorInterface
     public function encrypt(&$data, BlockCipher $blockCipher)
     {
         $data['secretString'] = !empty($data['secretString']) ? $blockCipher->encrypt($data['secretString']) : null;
-        $data['secretArray'] = !empty($data['secretArray'][0]) ? $blockCipher->encrypt(json_encode($data['secretArray'])) : null;
+        $data['secretArray'] = !empty($data['secretArray']) ? $blockCipher->encrypt(json_encode($data['secretArray'])) : null;
     }
 
     public function decrypt(&$data, BlockCipher $blockCipher)

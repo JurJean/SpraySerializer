@@ -21,7 +21,7 @@ class <?php echo $reflection->getShortName() ?>Encryptor implements EncryptorInt
         $data['<?php echo $property->getName() ?>'] = !empty($data['<?php echo $property->getName() ?>']) ? $blockCipher->encrypt($data['<?php echo $property->getName() ?>']) : null;
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetArray($property)): ?>
-        $data['<?php echo $property->getName() ?>'] = !empty($data['<?php echo $property->getName() ?>'][0]) ? $blockCipher->encrypt(json_encode($data['<?php echo $property->getName() ?>'])) : null;
+        $data['<?php echo $property->getName() ?>'] = !empty($data['<?php echo $property->getName() ?>']) ? $blockCipher->encrypt(json_encode($data['<?php echo $property->getName() ?>'])) : null;
 <?php break; ?>
 <?php endswitch; ?>
 <?php endforeach ?>
