@@ -184,7 +184,7 @@ abstract class BoundClosureSerializer implements SerializerInterface, Constructo
                     'Data is missing for %s::$%s, received keys: %s',
                     get_class($subject),
                     $property,
-                    array_keys($data)
+                    implode(', ', array_keys($data))
                 ));
             }
             return $defaultValue;

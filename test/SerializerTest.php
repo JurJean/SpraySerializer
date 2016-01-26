@@ -4,6 +4,7 @@ namespace Spray\Serializer;
 
 use DateTime;
 use DateTimeImmutable;
+use Spray\Serializer\Object\Exception\MissingDataException;
 use Spray\Serializer\TestAssets\Bar;
 use Spray\Serializer\TestAssets\BarCollection;
 use Spray\Serializer\TestAssets\Baz;
@@ -113,5 +114,18 @@ class SerializerTest extends ObjectSerializerTestCase
             ),
             $this->createSerializer()->serialize($subject)
         );
+    }
+
+
+    public function testDeserializeMissingData()
+    {
+        $this->setExpectedException(
+            MissingDataException::class,
+            'Data is missing for Spray\Serializer\TestAssets\Bar::$foobar, received keys: saanka, kaas'
+        );
+
+        $data = ['saanka' => '', 'kaas' => ''];
+
+        $this->createSerializer()->deserialize(Bar::class, $data);
     }
 }
