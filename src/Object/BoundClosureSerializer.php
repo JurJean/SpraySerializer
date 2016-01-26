@@ -4,6 +4,7 @@ namespace Spray\Serializer\Object;
 
 use Closure;
 use Spray\Serializer\Object\ConstructorInterface;
+use Spray\Serializer\Object\Exception\MissingDataException;
 use Spray\Serializer\SerializerInterface;
 
 abstract class BoundClosureSerializer implements SerializerInterface, ConstructorInterface
@@ -163,5 +164,30 @@ abstract class BoundClosureSerializer implements SerializerInterface, Constructo
         $context = $this->deserializer();
         $context($subject, $data, $serializer);
         return $subject;
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return closure
+     *
+     * @throws MissingDataException
+     */
+    protected function valueDeserializer()
+    {
+        return function($subject, array $data, $property, $defaultValue) {
+            if (isset($data[$property])) {
+                return $data[$property];
+            }
+            if (null === $defaultValue) {
+                throw new MissingDataException(sprintf(
+                    'Data is missing for %s::$%s, received keys: %s',
+                    get_class($subject),
+                    $property,
+                    array_keys($data)
+                ));
+            }
+            return $defaultValue;
+        };
     }
 }

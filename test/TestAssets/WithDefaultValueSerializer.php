@@ -5,17 +5,17 @@ namespace Spray\Serializer\TestAssets;
 use Spray\Serializer\Object\BoundClosureSerializer;
 use Spray\Serializer\SerializerInterface;
 
-class BarSerializer extends BoundClosureSerializer
+class WithDefaultValueSerializer extends BoundClosureSerializer
 {
     public function __construct()
     {
-        parent::__construct('Spray\Serializer\TestAssets\Bar');
+        parent::__construct('Spray\Serializer\TestAssets\WithDefaultValue');
     }
 
     protected function bindSerializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
-            $data['foobar'] = (string) $subject->foobar;
+            $data['foo'] = (string) $subject->foo;
         };
     }
 
@@ -23,7 +23,7 @@ class BarSerializer extends BoundClosureSerializer
     {
         $value = $this->valueDeserializer();
         return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
-            $subject->foobar = (string) $value($subject, $data, 'foobar', $subject->foobar);
+            $subject->foo = (string) $value($subject, $data, 'foo', $subject->foo);
         };
     }
 }

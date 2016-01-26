@@ -11,7 +11,7 @@ class SubjectSerializer extends BoundClosureSerializer
     {
         parent::__construct('Spray\Serializer\TestAssets\Subject');
     }
-    
+
     protected function bindSerializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
@@ -20,13 +20,14 @@ class SubjectSerializer extends BoundClosureSerializer
             $data['baz'] = $subject->baz;
         };
     }
-    
+
     protected function bindDeserializer()
     {
-        return function($subject, array &$data, SerializerInterface $serializer) {
-            $subject->foo = $data['foo'];
-            $subject->bar = $data['bar'];
-            $subject->baz = $data['baz'];
+        $value = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
+            $subject->foo = $value($subject, $data, 'foo', $subject->foo);
+            $subject->bar = $value($subject, $data, 'bar', $subject->bar);
+            $subject->baz = $value($subject, $data, 'baz', $subject->baz);
         };
     }
 }

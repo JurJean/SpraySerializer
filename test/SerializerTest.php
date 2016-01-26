@@ -11,6 +11,7 @@ use Spray\Serializer\TestAssets\Foo;
 use Spray\Serializer\TestAssets\HasDateTimeImmutable;
 use Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace;
 use Spray\Serializer\TestAssets\Subject;
+use Spray\Serializer\TestAssets\WithDefaultValue;
 use Spray\Serializer\TestAssets\WithOtherNamespace;
 use Spray\Serializer\Testing\ObjectSerializerTestCase;
 
@@ -52,6 +53,7 @@ class SerializerTest extends ObjectSerializerTestCase
             ),
             new BarCollection(array()),
             new WithOtherNamespace(new InOtherNamespace('foo'), new InOtherNamespace('bar')),
+            new WithDefaultValue()
 
 //            array(new Subject('foo', 'bar', 'baz'))
         ];

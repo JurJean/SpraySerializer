@@ -11,7 +11,7 @@ class WithOtherNamespaceSerializer extends BoundClosureSerializer
     {
         parent::__construct('Spray\Serializer\TestAssets\WithOtherNamespace');
     }
-    
+
     protected function bindSerializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
@@ -19,10 +19,11 @@ class WithOtherNamespaceSerializer extends BoundClosureSerializer
             $data['bar'] = isset($subject->bar) ? $serializer->serialize($subject->bar) : null;
         };
     }
-    
+
     protected function bindDeserializer()
     {
-        return function($subject, array &$data, SerializerInterface $serializer) {
+        $value = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
             $subject->foo = isset($data['foo']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['foo']) : null;
             $subject->bar = isset($data['bar']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['bar']) : null;
         };

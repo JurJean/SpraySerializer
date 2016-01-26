@@ -11,7 +11,7 @@ class ScalarSerializer extends BoundClosureSerializer
     {
         parent::__construct('Spray\Serializer\TestAssets\Scalar');
     }
-    
+
     protected function bindSerializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
@@ -26,19 +26,20 @@ class ScalarSerializer extends BoundClosureSerializer
             $data['unknown'] = $subject->unknown;
         };
     }
-    
+
     protected function bindDeserializer()
     {
-        return function($subject, array &$data, SerializerInterface $serializer) {
-            $subject->string = isset($data['string']) ? (string) $data['string'] : null;
-            $subject->int = isset($data['int']) ? (int) $data['int'] : null;
-            $subject->integer = isset($data['integer']) ? (int) $data['integer'] : null;
-            $subject->double = isset($data['double']) ? (double) $data['double'] : null;
-            $subject->float = isset($data['float']) ? (float) $data['float'] : null;
-            $subject->boolean = isset($data['boolean']) ? (bool) $data['boolean'] : null;
-            $subject->bool = isset($data['bool']) ? (bool) $data['bool'] : null;
-            $subject->array = isset($data['array']) ? (array) $data['array'] : array();
-            $subject->unknown = $data['unknown'];
+        $value = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
+            $subject->string = (string) $value($subject, $data, 'string', $subject->string);
+            $subject->int = (int) $value($subject, $data, 'int', $subject->int);
+            $subject->integer = (int) $value($subject, $data, 'integer', $subject->integer);
+            $subject->double = (double) $value($subject, $data, 'double', $subject->double);
+            $subject->float = (float) $value($subject, $data, 'float', $subject->float);
+            $subject->boolean = (bool) $value($subject, $data, 'boolean', $subject->boolean);
+            $subject->bool = (bool) $value($subject, $data, 'bool', $subject->bool);
+            $subject->array = (array) $value($subject, $data, 'array', $subject->array);
+            $subject->unknown = $value($subject, $data, 'unknown', $subject->unknown);
         };
     }
 }

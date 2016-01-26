@@ -69,4 +69,12 @@ class ObjectSerializerGeneratorTest extends PHPUnit_Framework_TestCase
             $this->createGenerator()->generate('Spray\Serializer\TestAssets\WithOtherNamespace')
         );
     }
+
+    public function testBuildWithDefaultValue()
+    {
+        $this->assertEquals(
+            file_get_contents(dirname(__DIR__) . '/TestAssets/WithDefaultValueSerializer.php'),
+            $this->createGenerator()->generate('Spray\Serializer\TestAssets\WithDefaultValue')
+        );
+    }
 }

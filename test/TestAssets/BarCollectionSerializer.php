@@ -11,7 +11,7 @@ class BarCollectionSerializer extends BoundClosureSerializer
     {
         parent::__construct('Spray\Serializer\TestAssets\BarCollection');
     }
-    
+
     protected function bindSerializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
@@ -21,10 +21,11 @@ class BarCollectionSerializer extends BoundClosureSerializer
             }
         };
     }
-    
+
     protected function bindDeserializer()
     {
-        return function($subject, array &$data, SerializerInterface $serializer) {
+        $value = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
             $subject->items = array();
             if (isset($data['items'])) {
                 foreach ($data['items'] as $key => $value) {

@@ -11,17 +11,18 @@ class HasInterfaceRelationSerializer extends BoundClosureSerializer
     {
         parent::__construct('Spray\Serializer\TestAssets\HasInterfaceRelation');
     }
-    
+
     protected function bindSerializer()
     {
         return function($subject, array &$data, SerializerInterface $serializer) {
             $data['interface'] = isset($subject->interface) ? $serializer->serialize($subject->interface) : null;
         };
     }
-    
+
     protected function bindDeserializer()
     {
-        return function($subject, array &$data, SerializerInterface $serializer) {
+        $value = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
             $subject->interface = isset($data['interface']) ? $serializer->deserialize('Spray\Serializer\TestAssets\SomeInterface', $data['interface']) : null;
         };
     }
