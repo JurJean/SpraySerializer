@@ -60,15 +60,21 @@ Let's start with a class to serialize. Note that the annotations hint the serial
 Then we'll initialize the serializer.
 
 ```php
-    $serializer = new Serializer(
-        new SerializerLocator(
-            new SerializerRegistry(),
-            new ObjectSerializerBuilder(
-                new ReflectionRegistry()
-            ),
-            new ArrayCache()
+    $eventManager = new EventManager();
+
+    $eventManager->attach(
+        new ObjectListener(
+            new SerializerLocator(
+                new SerializerRegistry(),
+                new ObjectSerializerGenerator(
+                    new AnnotationBackedPropertyInfo()
+                ),
+                new ArrayCache('Serializer')
+            )
         )
     );
+
+    return new Serializer($eventManager);
 ```
 
 Now we can serialize almost any object to an array and back to an object.
