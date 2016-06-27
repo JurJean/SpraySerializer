@@ -29,17 +29,17 @@ class ScalarSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
-            $subject->string = (string) $value($subject, $data, 'string', $subject->string);
-            $subject->int = (int) $value($subject, $data, 'int', $subject->int);
-            $subject->integer = (int) $value($subject, $data, 'integer', $subject->integer);
-            $subject->double = (double) $value($subject, $data, 'double', $subject->double);
-            $subject->float = (float) $value($subject, $data, 'float', $subject->float);
-            $subject->boolean = (bool) $value($subject, $data, 'boolean', $subject->boolean);
-            $subject->bool = (bool) $value($subject, $data, 'bool', $subject->bool);
-            $subject->array = (array) $value($subject, $data, 'array', $subject->array);
-            $subject->unknown = $value($subject, $data, 'unknown', $subject->unknown);
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
+            $subject->string = (string) $deserialize($subject, $data, 'string', $subject->string);
+            $subject->int = (int) $deserialize($subject, $data, 'int', $subject->int);
+            $subject->integer = (int) $deserialize($subject, $data, 'integer', $subject->integer);
+            $subject->double = (double) $deserialize($subject, $data, 'double', $subject->double);
+            $subject->float = (float) $deserialize($subject, $data, 'float', $subject->float);
+            $subject->boolean = (bool) $deserialize($subject, $data, 'boolean', $subject->boolean);
+            $subject->bool = (bool) $deserialize($subject, $data, 'bool', $subject->bool);
+            $subject->array = (array) $deserialize($subject, $data, 'array', $subject->array);
+            $subject->unknown = $deserialize($subject, $data, 'unknown', $subject->unknown);
         };
     }
 }

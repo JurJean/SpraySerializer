@@ -23,8 +23,8 @@ class FooSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
             $subject->bars = isset($data['bars']) ? $serializer->deserialize('Spray\Serializer\TestAssets\BarCollection', $data['bars']) : null;
             $subject->baz = isset($data['baz']) ? $serializer->deserialize('Spray\Serializer\TestAssets\Baz', $data['baz']) : null;
             $subject->date = isset($data['date']) ? $serializer->deserialize('DateTime', $data['date']) : null;

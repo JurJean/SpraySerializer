@@ -22,8 +22,8 @@ class WithOtherNamespaceSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
             $subject->foo = isset($data['foo']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['foo']) : null;
             $subject->bar = isset($data['bar']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['bar']) : null;
         };

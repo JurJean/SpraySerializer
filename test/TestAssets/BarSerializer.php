@@ -21,9 +21,9 @@ class BarSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
-            $subject->foobar = (string) $value($subject, $data, 'foobar', $subject->foobar);
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
+            $subject->foobar = (string) $deserialize($subject, $data, 'foobar', $subject->foobar);
         };
     }
 }

@@ -21,9 +21,9 @@ class WithDefaultValueSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
-            $subject->foo = (string) $value($subject, $data, 'foo', $subject->foo);
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
+            $subject->foo = (string) $deserialize($subject, $data, 'foo', $subject->foo);
         };
     }
 }

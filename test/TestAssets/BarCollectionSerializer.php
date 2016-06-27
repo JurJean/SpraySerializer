@@ -24,8 +24,8 @@ class BarCollectionSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
             $subject->items = array();
             if (isset($data['items'])) {
                 foreach ($data['items'] as $key => $value) {

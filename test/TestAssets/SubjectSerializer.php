@@ -23,11 +23,11 @@ class SubjectSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
-            $subject->foo = $value($subject, $data, 'foo', $subject->foo);
-            $subject->bar = $value($subject, $data, 'bar', $subject->bar);
-            $subject->baz = $value($subject, $data, 'baz', $subject->baz);
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
+            $subject->foo = $deserialize($subject, $data, 'foo', $subject->foo);
+            $subject->bar = $deserialize($subject, $data, 'bar', $subject->bar);
+            $subject->baz = $deserialize($subject, $data, 'baz', $subject->baz);
         };
     }
 }

@@ -58,13 +58,13 @@ class <?php echo $reflection->getShortName() ?>Serializer extends BoundClosureSe
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
 <?php foreach ($this->propertyInfo->findPropertiesDefinedInClass($reflection) as $property): ?>
 <?php switch (true): ?>
 <?php default: ?>
 <?php case ( ! $this->propertyInfo->hasPropertyAnnotation($property, 'var')): ?>
-            $subject-><?php echo $property->getName() ?> = $value($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
+            $subject-><?php echo $property->getName() ?> = $deserialize($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetObject($property)): ?>
             $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? $serializer->deserialize('<?php echo $this->propertyInfo->findTargetClass($property) ?>', $data['<?php echo $property->getName() ?>']) : null;
@@ -78,22 +78,22 @@ class <?php echo $reflection->getShortName() ?>Serializer extends BoundClosureSe
             }
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetArray($property) && ! $this->propertyInfo->isTargetArrayWithObjects($property)): ?>
-            $subject-><?php echo $property->getName() ?> = (array) $value($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
+            $subject-><?php echo $property->getName() ?> = (array) $deserialize($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetString($property)): ?>
-            $subject-><?php echo $property->getName() ?> = (string) $value($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
+            $subject-><?php echo $property->getName() ?> = (string) $deserialize($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetInteger($property)): ?>
-            $subject-><?php echo $property->getName() ?> = (int) $value($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
+            $subject-><?php echo $property->getName() ?> = (int) $deserialize($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetDouble($property)): ?>
-            $subject-><?php echo $property->getName() ?> = (double) $value($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
+            $subject-><?php echo $property->getName() ?> = (double) $deserialize($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetFloat($property)): ?>
-            $subject-><?php echo $property->getName() ?> = (float) $value($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
+            $subject-><?php echo $property->getName() ?> = (float) $deserialize($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
 <?php break; ?>
 <?php case ($this->propertyInfo->isTargetBoolean($property)): ?>
-            $subject-><?php echo $property->getName() ?> = (bool) $value($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
+            $subject-><?php echo $property->getName() ?> = (bool) $deserialize($subject, $data, '<?php echo $property->getName() ?>', $subject-><?php echo $property->getName() ?>);
 <?php break; ?>
 <?php endswitch; ?>
 <?php endforeach ?>

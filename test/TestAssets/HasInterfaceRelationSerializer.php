@@ -21,8 +21,8 @@ class HasInterfaceRelationSerializer extends BoundClosureSerializer
 
     protected function bindDeserializer()
     {
-        $value = $this->valueDeserializer();
-        return function($subject, array &$data, SerializerInterface $serializer) use ($value) {
+        $deserialize = $this->valueDeserializer();
+        return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
             $subject->interface = isset($data['interface']) ? $serializer->deserialize('Spray\Serializer\TestAssets\SomeInterface', $data['interface']) : null;
         };
     }
