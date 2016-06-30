@@ -129,4 +129,24 @@ class SerializerTest extends ObjectSerializerTestCase
 
         $this->createSerializer()->deserialize(Bar::class, $data);
     }
+
+
+    public function testSerializationSpeed()
+    {
+        $count = 0;
+        $serializer = $this->createSerializer();
+        $time = microtime(true);
+        for ($i = 0; $i < 1000; $i++) {
+            foreach ($this->createObjectsToSerialize() as $object) {
+                $count++;
+                $data = $serializer->serialize($object);
+                $serializer->deserialize(get_class($object), $data);
+            }
+        }
+        $this->assertLessThan(
+            1.5,
+            microtime(true) - $time,
+            sprintf('(de)serialization of %s objects took too long', $count)
+        );
+    }
 }
