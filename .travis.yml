@@ -11,3 +11,6 @@ before_script:
   - php composer.phar install --dev
 
 script: phpunit -c .
+
+env:
+  - TRAVIS=true

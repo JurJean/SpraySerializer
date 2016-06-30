@@ -133,6 +133,10 @@ class SerializerTest extends ObjectSerializerTestCase
 
     public function testSerializationSpeed()
     {
+        if (getenv('TRAVIS')) {
+            $this->markTestSkipped('Takes too long on travis');
+        }
+
         $count = 0;
         $serializer = $this->createSerializer();
         $time = microtime(true);
