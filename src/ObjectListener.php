@@ -30,7 +30,7 @@ class ObjectListener implements ListenerAggregateInterface
     /**
      * {@inheritdoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(SerializeEvent::CONSTRUCT, array($this, 'construct'));
         $this->listeners[] = $events->attach(SerializeEvent::INJECT, array($this, 'inject'));

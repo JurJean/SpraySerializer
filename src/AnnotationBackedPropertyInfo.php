@@ -42,7 +42,8 @@ class AnnotationBackedPropertyInfo implements PropertyInfoInterface
 
     public function isTargetScalar(PropertyReflection $property)
     {
-        return $this->isTargetString($property)
+        return $this->isTargetBoolean($property)
+            || $this->isTargetString($property)
             || $this->isTargetInteger($property)
             || $this->isTargetDouble($property)
             || $this->isTargetFloat($property);
@@ -50,78 +51,97 @@ class AnnotationBackedPropertyInfo implements PropertyInfoInterface
 
     public function isTargetString(PropertyReflection $property)
     {
-        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
-            'string',
-        ));
+        return $this->isStringType($this->propertyType($property));
     }
 
     public function isTargetInteger(PropertyReflection $property)
     {
-        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
-            'int',
-            'integer'
-        ));
+        return $this->isIntegerType($this->propertyType($property));
     }
 
     public function isTargetDouble(PropertyReflection $property)
     {
-        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
-            'double',
-        ));
+        return $this->isDoubleType($this->propertyType($property));
     }
 
     public function isTargetFloat(PropertyReflection $property)
     {
-        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
-            'float',
-        ));
+        return $this->isFloatType($this->propertyType($property));
     }
 
     public function isTargetBoolean(PropertyReflection $property)
     {
-        return in_array($property->getDocBlock()->getTag('var')->getContent(), array(
-            'boolean',
-            'bool'
-        ));
+        return $this->isBooleanType($this->propertyType($property));
     }
 
     public function isTargetArray(PropertyReflection $property)
     {
-        return 'array' === substr($property->getDocBlock()->getTag('var')->getContent(), 0, 5);
+        return ! $this->isTargetHashMap($property)
+            && (
+                'array' === substr($this->propertyType($property), 0, 5)
+                || 1 === preg_match('/^(.*)\[\]/', $this->propertyType($property))
+            );
+    }
+
+    public function isTargetHashMap(PropertyReflection $property)
+    {
+        return 1 === preg_match(
+            '|^array<(.*),(.*)>|',
+            $this->propertyType($property),
+            $matches
+        );
     }
 
     public function isTargetArrayWithObjects(PropertyReflection $property)
     {
-        return 0 !== preg_match(
-            '|^array<(.*)>|',
-            $property->getDocBlock()->getTag('var')->getContent()
-        );
+        $matches = [];
+        if (1 === preg_match('/^array<(.*)>/', $this->propertyType($property), $matches)) {
+            $parts = explode(',', $matches[1]);
+            $shortName = array_pop($parts);
+
+            return ! $this->isScalarType($shortName);
+        }
+        if (1 === preg_match('/^(.*)\[\]/', $this->propertyType($property), $matches)) {
+            return ! $this->isScalarType($matches[1]);
+        }
+
+        return false;
     }
 
     public function findTargetArrayClass(PropertyReflection $property)
     {
         $matches = array();
-        preg_match(
-            '|^array<(.*)>|',
-            $property->getDocBlock()->getTag('var')->getContent(),
-            $matches
-        );
+        if (1 === preg_match('/^array<(.*)>/i', $this->propertyType($property), $matches)) {
+            $parts = explode(',', $matches[1]);
+            $shortName = array_pop($parts);
 
-        if (($class = $this->findClass($property->getDeclaringClass(), $matches[1]))) {
-            return $class;
+            if (($class = $this->findClass($property->getDeclaringClass(), $shortName))) {
+                return $class;
+            }
+
+            throw new RuntimeException(sprintf(
+                'Cannot find target for array<%s>',
+                $matches[1]
+            ));
         }
 
-        throw new RuntimeException(sprintf(
-            'Cannot find target for array<%s>',
-            $matches[1]
-        ));
+        if (1 === preg_match('/^(.*)\[\]/i', $this->propertyType($property), $matches)) {
+            if (($class = $this->findClass($property->getDeclaringClass(), $matches[1]))) {
+                return $class;
+            }
+
+            throw new RuntimeException(sprintf(
+                'Cannot find target for %s[]',
+                $matches[1]
+            ));
+        }
     }
 
     public function isTargetObject(PropertyReflection $property)
     {
         if (($class = $this->findClass(
             $property->getDeclaringClass(),
-            $property->getDocBlock()->getTag('var')->getContent()))) {
+            $this->propertyType($property)))) {
             return true;
         }
         return false;
@@ -139,12 +159,15 @@ class AnnotationBackedPropertyInfo implements PropertyInfoInterface
 
         return $this->findClass(
             $property->getDeclaringClass(),
-            $property->getDocBlock()->getTag('var')->getContent()
+            $this->propertyType($property)
         );
     }
 
     protected function findClass(ClassReflection $reflection, $class)
     {
+        if (($className = $this->findClassByFqn($reflection, $class))) {
+            return $className;
+        }
         if (($className = $this->findClassInCurrentNamespace($reflection, $class))) {
             return $className;
         }
@@ -153,6 +176,17 @@ class AnnotationBackedPropertyInfo implements PropertyInfoInterface
         }
         if (($className = $this->findClassInRoot($class))) {
             return $className;
+        }
+    }
+
+    protected function findClassByFqn(ClassReflection $reflection, $class)
+    {
+        if ('\\' !== substr($class, 0, 1)) {
+            return null;
+        }
+        $fqn = ltrim($class, '\\');
+        if (class_exists($fqn) || interface_exists($fqn)) {
+            return $fqn;
         }
     }
 
@@ -223,5 +257,84 @@ class AnnotationBackedPropertyInfo implements PropertyInfoInterface
         );
 
         return $matches[1];
+    }
+
+    private function isScalarType($type)
+    {
+        return $this->isBooleanType($type)
+            || $this->isStringType($type)
+            || $this->isIntegerType($type)
+            || $this->isDoubleType($type)
+            || $this->isFloatType($type);
+    }
+
+    private function isBooleanType($type)
+    {
+        return in_array($type, array(
+            'boolean',
+            'bool'
+        ));
+    }
+
+    private function isStringType($type)
+    {
+        return in_array($type, array(
+            'string',
+        ));
+    }
+
+    private function isIntegerType($type)
+    {
+        return in_array($type, array(
+            'int',
+            'integer'
+        ));
+    }
+
+    private function isDoubleType($type)
+    {
+        return in_array($type, array(
+            'double',
+        ));
+    }
+
+    private function isFloatType($type)
+    {
+        return in_array($type, array(
+            'float'
+        ));
+    }
+
+    public function propertyType(PropertyReflection $property)
+    {
+        if ( ! $this->hasPropertyAnnotation($property, 'var')) {
+            throw new RuntimeException(sprintf(
+                'Cannot determine property type for %s::$%s as no @var annotation was defined',
+                $property->getDeclaringClass()->getName(),
+                $property->getName()
+            ));
+        }
+        return $property->getDocBlock()->getTag('var')->getContent();
+    }
+
+    public function hashMapPropertyType(PropertyReflection $property)
+    {
+        if ( ! $this->isTargetHashMap($property)) {
+            throw new RuntimeException(sprintf(
+                'Could not determine hash map property type as %s::$%s is not configured as a hash map: %s instead of array<t,t>',
+                $property->getDeclaringClass()->getName(),
+                $property->getName(),
+                $this->propertyType($property)
+            ));
+        }
+
+        preg_match(
+            '|^array<(.*)>|',
+            $this->propertyType($property),
+            $matches
+        );
+
+        $parts = explode(',', $matches[1]);
+        return array_pop($parts);
     }
 }

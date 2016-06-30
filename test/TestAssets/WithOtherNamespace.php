@@ -17,6 +17,11 @@ class WithOtherNamespace
      * @var Alias
      */
     private $bar;
+
+    /**
+     * @var \DateTimeImmutable
+     */
+    private $baz;
     
     /**
      * @param InOtherNamespace $foo

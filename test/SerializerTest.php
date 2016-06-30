@@ -13,6 +13,7 @@ use Spray\Serializer\TestAssets\HasDateTimeImmutable;
 use Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace;
 use Spray\Serializer\TestAssets\Subject;
 use Spray\Serializer\TestAssets\WithDefaultValue;
+use Spray\Serializer\TestAssets\WithHashMap;
 use Spray\Serializer\TestAssets\WithOtherNamespace;
 use Spray\Serializer\Testing\ObjectSerializerTestCase;
 
@@ -38,7 +39,6 @@ class SerializerTest extends ObjectSerializerTestCase
     public function createObjectsToSerialize()
     {
         $objects = [
-            new Subject('foo', 'bar', 'baz'),
             new Foo,
             new Foo(
                 new BarCollection(array(new Bar('foobar'))),
@@ -54,7 +54,8 @@ class SerializerTest extends ObjectSerializerTestCase
             ),
             new BarCollection(array()),
             new WithOtherNamespace(new InOtherNamespace('foo'), new InOtherNamespace('bar')),
-            new WithDefaultValue()
+            new WithDefaultValue(),
+            new WithHashMap()
 
 //            array(new Subject('foo', 'bar', 'baz'))
         ];

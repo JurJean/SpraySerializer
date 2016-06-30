@@ -14,14 +14,6 @@ class ObjectSerializerGeneratorTest extends PHPUnit_Framework_TestCase
         return new ObjectSerializerGenerator(new AnnotationBackedPropertyInfo());
     }
 
-    public function testGenerateSubjectSerializer()
-    {
-        $this->assertEquals(
-            file_get_contents(dirname(__DIR__) . '/TestAssets/SubjectSerializer.php'),
-            $this->createGenerator()->generate('Spray\Serializer\TestAssets\Subject')
-        );
-    }
-    
     public function testGenerateFoo()
     {
         $this->assertEquals(
@@ -75,6 +67,14 @@ class ObjectSerializerGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             file_get_contents(dirname(__DIR__) . '/TestAssets/WithDefaultValueSerializer.php'),
             $this->createGenerator()->generate('Spray\Serializer\TestAssets\WithDefaultValue')
+        );
+    }
+
+    public function testBuildWithHashMap()
+    {
+        $this->assertEquals(
+            file_get_contents(dirname(__DIR__) . '/TestAssets/WithHashMapSerializer.php'),
+            $this->createGenerator()->generate('Spray\Serializer\TestAssets\WithHashMap')
         );
     }
 }

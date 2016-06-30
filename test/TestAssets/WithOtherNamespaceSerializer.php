@@ -17,6 +17,7 @@ class WithOtherNamespaceSerializer extends BoundClosureSerializer
         return function($subject, array &$data, SerializerInterface $serializer) {
             $data['foo'] = isset($subject->foo) ? $serializer->serialize($subject->foo) : null;
             $data['bar'] = isset($subject->bar) ? $serializer->serialize($subject->bar) : null;
+            $data['baz'] = isset($subject->baz) ? $serializer->serialize($subject->baz) : null;
         };
     }
 
@@ -26,6 +27,7 @@ class WithOtherNamespaceSerializer extends BoundClosureSerializer
         return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
             $subject->foo = isset($data['foo']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['foo']) : null;
             $subject->bar = isset($data['bar']) ? $serializer->deserialize('Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace', $data['bar']) : null;
+            $subject->baz = isset($data['baz']) ? $serializer->deserialize('DateTimeImmutable', $data['baz']) : null;
         };
     }
 }

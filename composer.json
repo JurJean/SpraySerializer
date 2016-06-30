@@ -3,7 +3,7 @@
     "require": {
         "zendframework/zend-code": ">=2.3.0",
         "zendframework/zend-crypt": ">=2.3.0",
-        "zendframework/zend-eventmanager": ">=2.3.0,<3.0.0",
+        "zendframework/zend-eventmanager": ">=2.8.0",
         "symfony/filesystem": ">=2.3.0",
         "symfony/finder": ">=2.3.0",
         "php": ">=5.5.0"

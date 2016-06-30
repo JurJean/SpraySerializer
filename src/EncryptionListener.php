@@ -35,7 +35,7 @@ class EncryptionListener implements ListenerAggregateInterface
     /**
      * {@inheritdoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(SerializeEvent::INJECT, array($this, 'decrypt'), 500);
         $this->listeners[] = $events->attach(SerializeEvent::EXTRACT, array($this, 'encrypt'), -500);

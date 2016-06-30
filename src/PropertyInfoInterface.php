@@ -11,6 +11,10 @@ interface PropertyInfoInterface
 
     public function hasPropertyAnnotation(PropertyReflection $property, $annotationName);
 
+    public function propertyType(PropertyReflection $property);
+
+    public function hashMapPropertyType(PropertyReflection $property);
+
     public function isTargetScalar(PropertyReflection $property);
 
     public function isTargetString(PropertyReflection $property);
@@ -24,6 +28,8 @@ interface PropertyInfoInterface
     public function isTargetBoolean(PropertyReflection $property);
 
     public function isTargetArray(PropertyReflection $property);
+
+    public function isTargetHashMap(PropertyReflection $property);
 
     public function isTargetArrayWithObjects(PropertyReflection $property);
 

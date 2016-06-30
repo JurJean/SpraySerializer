@@ -7,10 +7,10 @@ use DateTimeImmutable;
 class HasDateTimeImmutable
 {
     /**
-     * @var DateTimeImmutable 
+     * @var DateTimeImmutable
      */
     public $dateTime;
-    
+
     public function __construct(DateTimeImmutable $dateTime)
     {
         $this->dateTime = $dateTime;

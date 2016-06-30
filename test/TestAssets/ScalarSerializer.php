@@ -17,13 +17,12 @@ class ScalarSerializer extends BoundClosureSerializer
         return function($subject, array &$data, SerializerInterface $serializer) {
             $data['string'] = (string) $subject->string;
             $data['int'] = (int) $subject->int;
-            $data['integer'] = (int) $subject->integer;
+            $data['integer'] = (integer) $subject->integer;
             $data['double'] = (double) $subject->double;
             $data['float'] = (float) $subject->float;
-            $data['boolean'] = (bool) $subject->boolean;
+            $data['boolean'] = (boolean) $subject->boolean;
             $data['bool'] = (bool) $subject->bool;
             $data['array'] = (array) $subject->array;
-            $data['unknown'] = $subject->unknown;
         };
     }
 
@@ -33,13 +32,12 @@ class ScalarSerializer extends BoundClosureSerializer
         return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
             $subject->string = (string) $deserialize($subject, $data, 'string', $subject->string);
             $subject->int = (int) $deserialize($subject, $data, 'int', $subject->int);
-            $subject->integer = (int) $deserialize($subject, $data, 'integer', $subject->integer);
+            $subject->integer = (integer) $deserialize($subject, $data, 'integer', $subject->integer);
             $subject->double = (double) $deserialize($subject, $data, 'double', $subject->double);
             $subject->float = (float) $deserialize($subject, $data, 'float', $subject->float);
-            $subject->boolean = (bool) $deserialize($subject, $data, 'boolean', $subject->boolean);
+            $subject->boolean = (boolean) $deserialize($subject, $data, 'boolean', $subject->boolean);
             $subject->bool = (bool) $deserialize($subject, $data, 'bool', $subject->bool);
             $subject->array = (array) $deserialize($subject, $data, 'array', $subject->array);
-            $subject->unknown = $deserialize($subject, $data, 'unknown', $subject->unknown);
         };
     }
 }

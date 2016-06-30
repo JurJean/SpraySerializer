@@ -17,7 +17,7 @@ class BarCollectionSerializer extends BoundClosureSerializer
         return function($subject, array &$data, SerializerInterface $serializer) {
             $data['items'] = array();
             foreach ($subject->items as $key => $value) {
-                $data['items'][$key] = $serializer->serialize($value);
+                $data['items'][] = $serializer->serialize($value);
             }
         };
     }
@@ -29,7 +29,7 @@ class BarCollectionSerializer extends BoundClosureSerializer
             $subject->items = array();
             if (isset($data['items'])) {
                 foreach ($data['items'] as $key => $value) {
-                    $subject->items[$key] = $serializer->deserialize('Spray\Serializer\TestAssets\Bar', $data['items'][$key]);
+                    $subject->items[] = $serializer->deserialize('Spray\Serializer\TestAssets\Bar', $data['items'][$key]);
                 }
             }
         };
