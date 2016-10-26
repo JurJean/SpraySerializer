@@ -45,7 +45,7 @@ class ArrayCache implements CacheInterface
             ));
         }
         $className = $subject . $this->suffix;
-        if ( ! class_exists($className)) {
+        if ( ! class_exists($className, false)) {
             eval('?>' . $this->cached[$subject]);
         }
         return new $className;
