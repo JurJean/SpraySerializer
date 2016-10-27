@@ -10,6 +10,7 @@ use Spray\Serializer\TestAssets\BarCollection;
 use Spray\Serializer\TestAssets\Baz;
 use Spray\Serializer\TestAssets\Foo;
 use Spray\Serializer\TestAssets\HasDateTimeImmutable;
+use Spray\Serializer\TestAssets\Ignore;
 use Spray\Serializer\TestAssets\OtherNamespace\InOtherNamespace;
 use Spray\Serializer\TestAssets\Subject;
 use Spray\Serializer\TestAssets\WithDefaultValue;
@@ -77,7 +78,8 @@ class SerializerTest extends ObjectSerializerTestCase
                 new Baz('foobar')
             )),
             new Baz('foobar'),
-            $date
+            $date,
+            new Ignore()
         );
         $this->assertEquals(
             array(
@@ -111,6 +113,9 @@ class SerializerTest extends ObjectSerializerTestCase
                     '__type' => 'Spray\Serializer\TestAssets\Baz'
                 ),
                 'date' => '2015-01-01 12:00:00',
+                'ignore' => [
+                    '__type' => 'Spray\Serializer\TestAssets\Ignore'
+                ],
                 '__type' => 'Spray\Serializer\TestAssets\Foo'
             ),
             $this->createSerializer()->serialize($subject)

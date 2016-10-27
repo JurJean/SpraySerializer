@@ -15,6 +15,8 @@ interface PropertyInfoInterface
 
     public function hashMapPropertyType(PropertyReflection $property);
 
+    public function isIgnored(PropertyReflection $propertyReflection);
+
     public function isTargetScalar(PropertyReflection $property);
 
     public function isTargetString(PropertyReflection $property);

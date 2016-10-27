@@ -20,6 +20,7 @@ class <?php echo $reflection->getShortName() ?>Serializer extends BoundClosureSe
         return function($subject, array &$data, SerializerInterface $serializer) {
 <?php foreach ($this->propertyInfo->findPropertiesDefinedInClass($reflection) as $property): ?>
 <?php switch (true): ?>
+<?php case ($this->propertyInfo->isIgnored($property)): break; ?>
 <?php case ($this->propertyInfo->isTargetObject($property)): ?>
             $data['<?php echo $property->getName() ?>'] = isset($subject-><?php echo $property->getName() ?>) ? $serializer->serialize($subject-><?php echo $property->getName() ?>) : null;
 <?php break; ?>
@@ -58,6 +59,7 @@ class <?php echo $reflection->getShortName() ?>Serializer extends BoundClosureSe
         return function($subject, array &$data, SerializerInterface $serializer) use ($deserialize) {
 <?php foreach ($this->propertyInfo->findPropertiesDefinedInClass($reflection) as $property): ?>
 <?php switch (true): ?>
+<?php case ($this->propertyInfo->isIgnored($property)): break; ?>
 <?php case ($this->propertyInfo->isTargetObject($property)): ?>
             $subject-><?php echo $property->getName() ?> = isset($data['<?php echo $property->getName() ?>']) ? $serializer->deserialize('<?php echo $this->propertyInfo->findTargetClass($property) ?>', $data['<?php echo $property->getName() ?>']) : null;
 <?php break; ?>

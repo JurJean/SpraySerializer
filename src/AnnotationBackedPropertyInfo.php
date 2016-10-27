@@ -40,6 +40,11 @@ class AnnotationBackedPropertyInfo implements PropertyInfoInterface
         return true;
     }
 
+    public function isIgnored(PropertyReflection $propertyReflection)
+    {
+        return $this->hasPropertyAnnotation($propertyReflection, 'ignore');
+    }
+
     public function isTargetScalar(PropertyReflection $property)
     {
         return $this->isTargetBoolean($property)
