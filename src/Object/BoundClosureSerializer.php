@@ -176,7 +176,7 @@ abstract class BoundClosureSerializer implements SerializerInterface, Constructo
     protected function valueDeserializer()
     {
         return function($subject, array $data, $property, $defaultValue) {
-            if (isset($data[$property])) {
+            if (array_key_exists($property, $data)) {
                 return $data[$property];
             }
             if (null === $defaultValue) {
